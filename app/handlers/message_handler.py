@@ -1,0 +1,113 @@
+from aiogram import F, Router
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import CommandStart, Command
+from aiogram.fsm.context import FSMContext
+
+from ..database.user_methods import (
+    add_user, get_balance, get_users
+)
+
+from ..keyboards.inlineKeyboards import (
+    starting_keyboard, main_menu_keyboard,
+    shop_list_build, balance_menu_keyboard,
+    go_back_from_support, answers_menu_keyboard
+)
+from ..states.userStates import UserStates
+from .add_shop_handler import router_shop
+from .balance_handler import router_balance
+from .answers_handler import router_answers
+
+import app.keyboards.callbacks.callbacks as cb
+
+
+router_main = Router()
+router_main.include_routers(
+    router_shop,
+    router_answers,
+    router_balance
+)
+
+
+# Starting!!!
+@router_main.message(CommandStart())
+async def start_msg(message: Message, state: FSMContext):
+    await state.set_state(UserStates.started)
+    
+    if not await add_user(message.chat.id):
+        pass
+    
+    await message.answer(text="Привет, это сервис искусственного интеллекта разработанный для Wildberries @iiwbbot ✌️\n\n"+
+                         "Я работаю на основе Искусственного интеллекта и умею полностью автономно отвечать на отзывы и вопросы покупателей и публиковать их🔥\n\n"+
+                         "Я умею сглаживать конфликты и мои ответы совершенно не отличаются от ответов человека😎\n\n"+
+                         "Для автоматических ответов добавьте магазин", 
+                         reply_markup=starting_keyboard)
+    
+# Main menu
+@router_main.callback_query(F.data==cb.main_menu)
+async def main_menu(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.message.edit_text(text="Выберите один из пунктов главного меню:",
+                                           reply_markup=main_menu_keyboard)
+    await state.set_state(UserStates.menu)
+    await callback_query.answer()
+
+
+# List of stores
+@router_main.callback_query(F.data==cb.shop_list)
+async def shop_list(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.shop_list)
+    
+    await callback_query.message.edit_text(text="Ваши магазины:",
+                                           reply_markup=await shop_list_build(callback_query.from_user.id))
+    await callback_query.answer()
+    
+
+# BOT Answers
+@router_main.callback_query(F.data==cb.answers)
+async def answers_menu(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.answer_menu)
+    
+    x = 5
+    
+    await callback_query.message.edit_text(text=f"Я ответил на {x} отзывов! Все в порядке, я справлюсь, Босс)",
+                                           reply_markup=answers_menu_keyboard)
+    
+    await callback_query.answer()
+
+
+# Balance menu
+@router_main.callback_query(F.data==cb.balance)
+async def balance_menu(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.balance_menu)
+    
+    balance = await get_balance(callback_query.from_user.id)
+    
+    await callback_query.message.edit_text(text=f"Вам доступно {balance} токенов на отзывы и вопросы.",
+                                           reply_markup=balance_menu_keyboard)
+    
+    await callback_query.answer()
+    
+    
+# Support message
+@router_main.callback_query(F.data==cb.support)
+async def support_msg(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.support_menu)
+    
+    await callback_query.message.edit_text(text="По вопросам обращайтесь в поддержку (тут будет ссылка)",
+                                           reply_markup=go_back_from_support)
+    
+    await state.clear()
+    await state.set_state(UserStates.menu)
+    await callback_query.answer()
+    
+
+# @router_main.message(Command("getAllUsers"))
+# async def getUsersList(message: Message):
+    
+#     list_of_users = await get_users()
+#     print(list_of_users)
+    
+#     if len(list_of_users) == 0:
+#         await message.answer(text="Список пользователей пуст, что очень странно...")
+    
+#     await message.answer(text="Список пользователей:\n\n"+
+#                          "\n".join(list_of_users))
