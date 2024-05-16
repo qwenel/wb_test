@@ -56,7 +56,7 @@ setting_ratings_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Отзывы выше 2*(2-5)", callback_data=cb.select_gt2_ratings)],
     [InlineKeyboardButton(text="Отзывы выше 3*(3-5)", callback_data=cb.select_gt3_ratings)],
     [InlineKeyboardButton(text="Отзывы выше 4*(4-5)", callback_data=cb.select_gt4_ratings)],
-    [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.go_back_from_ratings)]
+    [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.shop_list)]
 ])
 
 go_back_from_support = InlineKeyboardMarkup(inline_keyboard=[

@@ -20,6 +20,7 @@ from .validChecks import is_valid_api_key
 
 router_shop = Router()
 
+
 # ======= GET SHOP NAME
 @router_shop.callback_query(F.data == cb.add_shop)
 async def ask_shop_name(callback_query: CallbackQuery, state: FSMContext): 
@@ -27,7 +28,12 @@ async def ask_shop_name(callback_query: CallbackQuery, state: FSMContext):
     
     await state.set_state(UserStates.awaiting_shop_name)
     
-    await callback_query.message.edit_text(text="Введите название магазина",
+    if callback_query.message.photo:
+        await callback_query.message.delete()
+        await callback_query.message.answer(text="Введите название магазина",
+                                           reply_markup=in_kb.go_to_main_menu_keyboard)
+    else:
+        await callback_query.message.edit_text(text="Введите название магазина",
                                            reply_markup=in_kb.go_to_main_menu_keyboard)
     await callback_query.answer()
     
@@ -92,7 +98,7 @@ async def got_api_key(message : Message, state: FSMContext):
                         "А именно\n\nБот сможет автоматически публиковать ответы на отзывы с выбранными вами фильтрами.\n\n"+
                         "Либо же, робот будет присылать вам сгенерированные им ответы на одобрение, а вы будете решать, публиковать ответ или нет.\n\n"+
                         "Отвечать на ваши отзывы автоматически? ⤵️",
-                        reply_markup=in_kb.decide_auto_ans_keyboard)
+                        reply_markup=in_kb.decide_auto_ans_keyboard)    
     
 
 # ======= GOT YES FOR AUTO ANSWERS
@@ -129,7 +135,7 @@ async def no_auto_answer(callback_query: CallbackQuery, state: FSMContext):
                                             reply_markup=in_kb.setting_ratings_keyboard)
     
     await callback_query.answer()       
-    
+       
     
 # ======= CHOSEN SHOP MENU (SETTINGS : AUTO, FILTER, DELETE)    
 @router_shop.callback_query(UserStates.shop_list, F.data[:5] == "shop_")    
@@ -205,6 +211,26 @@ async def got_ratings_gt4(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(UserStates.menu)
     
+
+# ======= SETTING SWITCH RATING
+@router_shop.callback_query(UserStates.chosen_shop, F.data==cb.switch_rating)    
+async def no_auto_answer(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.awaiting_rating)
+    
+    data = await state.get_data()
+    
+    shop_to_set_rating = data["shop_name"]
+    
+    await callback_query.message.edit_text(text=f"Здесь для магазина \"{shop_to_set_rating}\" вы можете гибко настроить, как бот будет отвечать на ваши отзывы, в зависимости от их оценки.\n\n"+
+                                            "Например\n\nВы можете выбрать, чтобы на все отзывы с оценкой 5 и 4 звезды бот отвечал в полностью автоматическом режиме.\n\n"+
+                                            "На все остальные отзывы [с оценками 3, 2, 1 звезда] бот будет создавать ответ, но будет присылать вам на согласование.\n\n"+
+                                            "Выберите на какие отзывы отвечать автоматически? ⤵️",
+                                            reply_markup=in_kb.setting_ratings_keyboard)
+    
+    await callback_query.answer()
+    await state.clear()
+    await state.set_state(UserStates.menu)
+
 
 # ======== SETTING TOGGLING AUTO ANSWER
 @router_shop.callback_query(UserStates.chosen_shop, F.data==cb.toggle_auto)

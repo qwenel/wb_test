@@ -9,7 +9,7 @@ switch_rating = "rating_switch"
 
 main_menu = "menu"
 go_back_from_api = "name"
-go_back_from_ratings = "api"
+go_back_to_auto_ans = "auto_ans"
 
 shop_list = "shop_list"
 answers = "answers"
@@ -19,7 +19,6 @@ support = "support"
 balance_replenishment = "pay_money"
 
 last_5_answers = "answer_last5"
-example = "answer_example"
 show_more = "answer_show_more"
 
 yes_auto = "auto_yes"

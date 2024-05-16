@@ -16,13 +16,6 @@ async def show_last_answers(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
 
 
-@router_answers.callback_query(F.data==cb.example)
-async def show_example(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(UserStates.example_answer)
-    
-    await callback_query.answer()
-
-
 @router_answers.callback_query(F.data==cb.show_more)
 async def show_more_answers(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.show_more_answers)
