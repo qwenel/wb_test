@@ -6,3 +6,6 @@
 
 # ignore .venv
 .venv
+
+# ignore bot.py
+bot.py
