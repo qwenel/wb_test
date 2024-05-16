@@ -6,6 +6,16 @@ import app.keyboards.callbacks.callbacks as cb
 import app.database.shop_methods as db_shop
 
 
+shop_setting_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Сменить режим автоматического ответа", callback_data=cb.toggle_auto)],
+    [InlineKeyboardButton(text="Сменить фильтр отзывов", callback_data=cb.switch_rating)]
+])
+
+decide_auto_ans_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text=('Да'), callback_data=cb.yes_auto),
+     InlineKeyboardButton(text='Нет', callback_data=cb.no_auto)]
+])
+
 go_back_from_balance_replenishment = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)],
     [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.balance)]
@@ -17,9 +27,9 @@ balance_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
 ])
 
 answers_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text="Список последних 5", callback_data=cb.last_5_answers)]
-    [InlineKeyboardButton(text="Пример справа будет", callback_data=cb.example)]
-    [InlineKeyboardButton(text="Загрузить ещё", callback_data=cb.show_more)]
+    [InlineKeyboardButton(text="Список последних 5", callback_data=cb.last_5_answers)],
+    [InlineKeyboardButton(text="Пример справа будет", callback_data=cb.example)],
+    [InlineKeyboardButton(text="Загрузить ещё", callback_data=cb.show_more)],
     [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.main_menu)]
 ])
 

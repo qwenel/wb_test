@@ -16,3 +16,5 @@ class UserStates(StatesGroup):
     show_last_answers = State()
     example_answer = State()
     show_more_answers = State()
+    awaiting_auto_choose = State()
+    toggle_auto = State()

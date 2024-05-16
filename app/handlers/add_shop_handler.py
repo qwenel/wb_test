@@ -8,7 +8,8 @@ import app.keyboards.inlineKeyboards as in_kb
 import app.keyboards.callbacks.callbacks as cb
 
 from ..database.shop_methods import (
-    add_shop, delete_shop_if_null, delete_shop
+    add_shop, delete_shop_if_null, delete_shop,
+    toggle_auto_ans
 )
 
 from ..database.shop_settings import (
@@ -82,15 +83,52 @@ async def got_api_key(message : Message, state: FSMContext):
         return
     
     await state.update_data(api_key=message.text)
-    await state.set_state(UserStates.awaiting_rating)
+    await state.set_state(UserStates.awaiting_auto_choose)
     
     await message.answer(text=f"Ура, Магазин \"{data["shop_name"]}\" успешно добавлен🎉\n\n"+
-                        "Здесь вы можете гибко настроить, как бот будет отвечать на ваши отзывы, в зависимости от их оценки.\n\n"+
-                        "Например\n\nВы можете выбрать, чтобы на все отзывы с оценкой 5 и 4 звезды бот отвечал в полностью автоматическом режиме.\n\n"+
-                        "На все остальные отзывы [с оценками 3, 2, 1 звезда] бот будет создавать ответ, но будет присылать вам на согласование.\n\n"+
-                        "Выберите на какие отзывы отвечать автоматически?)",
-                        reply_markup=in_kb.setting_ratings_keyboard)
+                        "Здесь вы можете выбрать, отвечать на отзывы автоматически или вручную.\n\n"+
+                        "А именно\n\nБот сможет автоматически публиковать ответы на отзывы с выбранными вами фильтрами.\n\n"+
+                        "Либо же, робот будет присылать вам сгенерированные им ответы на одобрение, а вы будете решать, публиковать ответ или нет.\n\n"+
+                        "Отвечать на ваши отзывы автоматически? ⤵️",
+                        reply_markup=in_kb.decide_auto_ans_keyboard)
     
+    
+@router_shop.callback_query(UserStates.awaiting_auto_choose, F.data==cb.yes_auto)    
+async def yes_auto_answer(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.awaiting_rating)
+    
+    data = await state.get_data()
+    
+    if not await toggle_auto_ans(callback_query.from_user.id, data["shop_name"]):
+        callback_query.message.answer(text="Произошла непредвиденная ошибка.",
+                                      reply_markup=in_kb.go_back_from_api_keyboard)
+    
+    await callback_query.message.edit_text(text="Отлично! Настройка сохранена.\n\n"+
+                                           "Здесь же вы можете гибко настроить, как бот будет отвечать на ваши отзывы, в зависимости от их оценки.\n\n"+
+                                            "Например\n\nВы можете выбрать, чтобы на все отзывы с оценкой 5 и 4 звезды бот отвечал в полностью автоматическом режиме.\n\n"+
+                                            "На все остальные отзывы [с оценками 3, 2, 1 звезда] бот будет создавать ответ, но будет присылать вам на согласование.\n\n"+
+                                            "Выберите на какие отзывы отвечать автоматически? ⤵️",
+                                            reply_markup=in_kb.setting_ratings_keyboard)
+    
+    await callback_query.answer()    
+    
+    
+@router_shop.callback_query(UserStates.awaiting_auto_choose, F.data==cb.no_auto)    
+async def no_auto_answer(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.awaiting_rating)
+    
+    await callback_query.message.edit_text(text="Отлично! Настройка сохранена.\n\n"+
+                                           "Здесь же вы можете гибко настроить, как бот будет отвечать на ваши отзывы, в зависимости от их оценки.\n\n"+
+                                            "Например\n\nВы можете выбрать, чтобы на все отзывы с оценкой 5 и 4 звезды бот отвечал в полностью автоматическом режиме.\n\n"+
+                                            "На все остальные отзывы [с оценками 3, 2, 1 звезда] бот будет создавать ответ, но будет присылать вам на согласование.\n\n"+
+                                            "Выберите на какие отзывы отвечать автоматически? ⤵️",
+                                            reply_markup=in_kb.setting_ratings_keyboard)
+    
+    await callback_query.answer()       
+    
+    
+@router_shop.callback_query(UserStates.toggle_auto, F.data==cb.toggle_auto)
+async def toggle_auto_choose(callback)
     
 @router_shop.callback_query(F.data == cb.select_all_ratings)
 async def got_ratings(callback_query: CallbackQuery, state: FSMContext):

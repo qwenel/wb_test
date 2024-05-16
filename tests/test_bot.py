@@ -83,8 +83,6 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
             got_api2 = await db_settings.get_api_key(111, "test_name2", db)
             got_api3 = await db_settings.get_api_key(111, "test_name3", db)
             
-            print(got_api1, got_api2, got_api3)
-            
             await db_shop.delete_shop_if_null(111, db)
             
             got_deleted_id = await db_shop.get_shop_id(111, "test_name3", db)
@@ -125,7 +123,33 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(got_last_name, "last")
             
             
+    async def toggle_auto_ans(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
             
+            db = tmpdirname+'/db_test.db'
+            
+            await db_user.add_user(111, db)
+            await db_user.add_user(222, db)
+            
+            await db_shop.add_shop(111, "shop1", db)
+            await db_shop.add_shop(111, "shop2", db)
+            await db_shop.add_shop(222, "shop21", db)
+            await db_shop.add_shop(222, "shop22", db)
+            
+            await db_shop.toggle_auto_ans(111, "shop1", db)
+            await db_shop.toggle_auto_ans(222, "shop22", db)
+                
+            got_status_1 = await db_shop.get_status_auto_ans(111, "shop1", db)
+            got_status_2 = await db_shop.get_status_auto_ans(111, "shop2", db)
+            got_status_3 = await db_shop.get_status_auto_ans(222, "shop21", db)
+            got_status_4 = await db_shop.get_status_auto_ans(222, "shop22", db)    
+            got_status_5 = await db_shop.get_status_auto_ans(222, "shoppp", db)
+            
+            self.assertEqual(got_status_1, True)
+            self.assertEqual(got_status_2, False)
+            self.assertEqual(got_status_3, False)
+            self.assertEqual(got_status_4, True)
+            self.assertEqual(got_status_5, None)
             
     # async def test_add_user(self):
         

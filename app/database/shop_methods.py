@@ -202,3 +202,42 @@ async def get_shops_list(telegram_id: int, db=path) -> list:
     await conn.close()
     
     return formatted_list
+
+
+async def toggle_auto_ans(telegram_id:int, shop_name:str, db=path) -> bool:
+    if await get_shop_id(telegram_id, shop_name) == -1:
+        return False
+    
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("UPDATE shops SET auto_ans=(1-auto_ans) WHERE fk_tg_id=? AND shop_name=?", (telegram_id, shop_name))
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    return True
+
+
+async def get_status_auto_ans(telegram_id:int, shop_name:str, db=path) -> bool | None:
+    if await get_shop_id(telegram_id, shop_name) == -1:
+        return None
+    
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT auto_ans FROM shops WHERE fk_tg_id=? AND shop_name=?", (telegram_id, shop_name))
+    
+    got_status = await cursor.fetchone()
+        
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    if got_status is None:
+        return None
+    
+    if got_status[0] == 1:
+        return True
+    return False

@@ -4,7 +4,6 @@ from ..database.connection import create_connection
 
 async def add_user(telegram_id: int, db=path) -> bool:
     if await get_user(telegram_id, db) != -1:
-        print("Пользователь уже существует", telegram_id)
         return False
     
     conn = await create_connection(db)
@@ -15,7 +14,7 @@ async def add_user(telegram_id: int, db=path) -> bool:
     await cursor.close()
     await conn.commit()
     await conn.close()
-    print("Пользователь успешно добавлен в базу", telegram_id)
+
     return True
     
     
