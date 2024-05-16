@@ -18,3 +18,4 @@ class UserStates(StatesGroup):
     show_more_answers = State()
     awaiting_auto_choose = State()
     toggle_auto = State()
+    chosen_shop = State()

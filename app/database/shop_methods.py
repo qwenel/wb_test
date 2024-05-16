@@ -230,7 +230,7 @@ async def get_status_auto_ans(telegram_id:int, shop_name:str, db=path) -> bool |
     await cursor.execute("SELECT auto_ans FROM shops WHERE fk_tg_id=? AND shop_name=?", (telegram_id, shop_name))
     
     got_status = await cursor.fetchone()
-        
+    
     await cursor.close()
     await conn.commit()
     await conn.close()

@@ -4,3 +4,5 @@
 # ignore ,vscode
 *.vscode
 
+# ignore .venv
+.venv

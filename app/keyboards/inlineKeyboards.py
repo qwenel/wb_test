@@ -28,7 +28,6 @@ balance_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
 
 answers_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Список последних 5", callback_data=cb.last_5_answers)],
-    [InlineKeyboardButton(text="Пример справа будет", callback_data=cb.example)],
     [InlineKeyboardButton(text="Загрузить ещё", callback_data=cb.show_more)],
     [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.main_menu)]
 ])
@@ -39,6 +38,11 @@ go_to_main_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
 
 go_back_from_delete_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.delete_shop)],
+    [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
+])
+
+go_back_from_toggle_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.toggle_auto)],
     [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
 ])
 
@@ -70,6 +74,13 @@ main_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Поддержка", callback_data=cb.support)],
 ])
 
+chosen_shop_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Сменить фильтр рейтинга", callback_data=cb.switch_rating)],
+    [InlineKeyboardButton(text="Сменить режим обработки отзывов", callback_data=cb.toggle_auto)],
+    [InlineKeyboardButton(text="Удалить магазин", callback_data=cb.delete_shop)],
+    [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.shop_list)],
+    [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
+])
 
 async def shop_list_build(telegram_id: int) -> InlineKeyboardMarkup:
     got_list = await db_shop.get_shops_list(telegram_id)
@@ -80,8 +91,6 @@ async def shop_list_build(telegram_id: int) -> InlineKeyboardMarkup:
         builder.button(text=shop, callback_data="shop_"+shop)
         
     builder.button(text="Добавить магазин", callback_data=cb.add_shop)
-    
-    builder.button(text="Удалить магазин", callback_data=cb.delete_shop)
     
     builder.button(text="Назад ↩️", callback_data=cb.main_menu)
     
