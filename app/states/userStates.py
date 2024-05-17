@@ -18,3 +18,5 @@ class UserStates(StatesGroup):
     awaiting_auto_choose = State()
     toggle_auto = State()
     chosen_shop = State()
+    
+    generator_is_on = State()

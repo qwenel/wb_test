@@ -17,9 +17,10 @@ CREATE TABLE IF NOT EXISTS shops (
   	fk_tg_id INTEGER REFERENCES users(tg_id)
 );
 
-CREATE TABLE IF NOT EXISTS answers (
+CREATE TABLE IF NOT EXISTS feedbacks (
 	id INTEGER PRIMARY KEY,
-	ans TEXT,
+	fb_text TEXT NOT NULL,
+	answer TEXT,
 	fk_shop_id INTEGER REFERENCES shops(id)
 );
 """

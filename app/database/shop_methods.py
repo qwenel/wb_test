@@ -204,6 +204,27 @@ async def get_shops_list(telegram_id: int, db=path) -> list:
     return formatted_list
 
 
+async def get_apis_list(telegram_id: int, db=path) -> list[:str] | None:
+  
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT api_key FROM shops WHERE fk_tg_id=?", (telegram_id, ))
+    
+    list_of_apis = await cursor.fetchall()
+    
+    if list_of_apis is None:
+        return None
+    
+    formatted_list = [api_cortage[0] for api_cortage in list_of_apis]
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    return formatted_list
+
+
 async def toggle_auto_ans(telegram_id:int, shop_name:str, db=path) -> bool:
     if await get_shop_id(telegram_id, shop_name) == -1:
         return False

@@ -54,6 +54,25 @@ async def get_user(telegram_id: int, db=path) -> int:
     return got_telegram_id[0]
 
 
+async def get_users_with_balance(db=path) -> dict[:int, :int] | None:
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT tg_id, balance FROM users WHERE balance > 0")
+    got_balance_users = await cursor.fetchall()
+        
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    if got_balance_users is None:
+        return None
+    
+    users_with_balance = [{user[0], user[1]} for user in got_balance_users]
+    
+    return users_with_balance
+
+
 async def get_balance(telegram_id: int, db=path) -> int | None:
     conn = await create_connection(db)
     cursor = await conn.cursor()
