@@ -13,7 +13,7 @@ from ..keyboards.inlineKeyboards import (
     go_back_from_support, answers_menu_keyboard
 )
 from ..states.userStates import UserStates
-from .add_shop_handler import router_shop
+from .shop_handler import router_shop
 from .balance_handler import router_balance
 from .answers_handler import router_answers
 

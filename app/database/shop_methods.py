@@ -232,7 +232,23 @@ async def toggle_auto_ans(telegram_id:int, shop_name:str, db=path) -> bool:
     conn = await create_connection(db)
     cursor = await conn.cursor()
     
-    await cursor.execute("UPDATE shops SET auto_ans=(1-auto_ans) WHERE fk_tg_id=? AND shop_name=?", (telegram_id, shop_name))
+    await cursor.execute("UPDATE shops SET auto_ans=1 WHERE fk_tg_id=? AND shop_name=?", (telegram_id, shop_name))
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    return True
+
+
+async def toggle_manual_ans(telegram_id:int, shop_name:str, db=path) -> bool:
+    if await get_shop_id(telegram_id, shop_name) == -1:
+        return False
+    
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("UPDATE shops SET auto_ans=0 WHERE fk_tg_id=? AND shop_name=?", (telegram_id, shop_name))
     
     await cursor.close()
     await conn.commit()

@@ -9,3 +9,7 @@
 
 # ignore bot.py
 bot.py
+
+# ignore __pycache__
+
+*/__pycache__

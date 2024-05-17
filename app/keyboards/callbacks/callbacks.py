@@ -23,4 +23,7 @@ show_more = "answer_show_more"
 
 yes_auto = "auto_yes"
 no_auto = "auto_no"
-toggle_auto = "auto_toggle"
+
+settings = "shop_"
+setting_rating="set_new_rate"
+setting_auto="set_new_auto"
