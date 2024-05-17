@@ -2,6 +2,7 @@ from app.database.user_methods import get_users_with_balance
 from app.database.shop_methods import get_apis_list
 from ..wb.wb_feedbacks_ans import get_feedback
 
+
 async def scheduled_db_scan_job() -> bool:
     
     users_with_balance = await get_users_with_balance()
