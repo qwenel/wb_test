@@ -44,7 +44,7 @@ async def get_unanswered_fb_list(telegram_id:int, db=path) -> bool | list:
     conn = await create_connection(db)
     cursor = await conn.cursor()
     
-    await cursor.execute("SELECT fb.fb_rating, fb.fb_shop_wb, fb.fb_product_wb, fb.fb_text FROM feedbacks fb LEFT JOIN shops sh on sh.id=fb.fk_shop_id LEFT JOIN users u on u.tg_id=sh.fk_tg_id WHERE u.tg_id=?", (telegram_id, ))
+    await cursor.execute("SELECT fb.fb_rating, fb.fb_shop_wb, fb.fb_product_wb, fb.fb_text, fb.fb_id FROM feedbacks fb LEFT JOIN shops sh on sh.id=fb.fk_shop_id LEFT JOIN users u on u.tg_id=sh.fk_tg_id WHERE u.tg_id=?", (telegram_id, ))
     
     list_of_fb = await cursor.fetchall()
     

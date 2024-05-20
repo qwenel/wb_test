@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 
 import app.keyboards.callbacks.callbacks as cb
@@ -12,8 +12,8 @@ router_answers = Router()
 
 
 @router_answers.callback_query(F.data==cb.unanswered)
-async def show_last_answers(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(UserStates.show_last_answers)
+async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserStates.unanswered)
     
     await callback_query.answer()
     
@@ -25,11 +25,30 @@ async def show_last_answers(callback_query: CallbackQuery, state: FSMContext):
         await state.clear()
         return
     
-    await callback_query.message.answer(text="ОТЗЫВ\n\n"+
-                                        f"Оценка: {unanswered_feedbacks[0][0]}\n"+
-                                        f"Магазин: {unanswered_feedbacks[0][1]}\n"+
-                                        f"Товар: {unanswered_feedbacks[0][2]}\n"+
-                                        f"Текст:\n{unanswered_feedbacks[0][3]}")
+    for i in range(len(unanswered_feedbacks)):
+        if i != len(unanswered_feedbacks) - 1:
+            await callback_query.message.answer(text="ОТЗЫВ\n\n"+
+                                            f"Оценка: {unanswered_feedbacks[i][0]}\n"+
+                                            f"Магазин: {unanswered_feedbacks[i][1]}\n"+
+                                            f"Товар: {unanswered_feedbacks[i][2]}\n"+
+                                            f"Текст:\n{unanswered_feedbacks[i][3]}",
+                                            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                                                [InlineKeyboardButton(text="Сгенерировать", callback_data=cb.generate+unanswered_feedbacks[0][4])]
+                                            ]))
+            continue
+        await callback_query.message.answer(text="ОТЗЫВ\n\n"+
+                                            f"Оценка: {unanswered_feedbacks[i][0]}\n"+
+                                            f"Магазин: {unanswered_feedbacks[i][1]}\n"+
+                                            f"Товар: {unanswered_feedbacks[i][2]}\n"+
+                                            f"Текст:\n{unanswered_feedbacks[i][3]}",
+                                            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                                                [InlineKeyboardButton(text="Сгенерировать", callback_data=cb.generate+unanswered_feedbacks[0][4])]
+                                            ]))
+        
+        
+
+
+# @router_answers.callback_query(UserStates.show_last_answers, F.data[:4] == cb.generate)
 
 
 @router_answers.callback_query(F.data==cb.archive_fb)

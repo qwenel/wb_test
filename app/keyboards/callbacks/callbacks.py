@@ -27,3 +27,6 @@ no_auto = "auto_no"
 settings = "shop_"
 setting_rating="set_new_rate"
 setting_auto="set_new_auto"
+
+generate = "gen_"
+show_more = "show_more"
