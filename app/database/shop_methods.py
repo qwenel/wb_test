@@ -21,12 +21,12 @@ async def add_shop(telegram_id : int, shop_name : str, db=path) -> bool:
     return True
     
 
-async def get_shop_id(telegram_id:int, api_key="", shop_name="", db=path) -> int | bool:
+async def get_shop_id(telegram_id=0, api_key="", shop_name="", db=path) -> int | bool:
     conn = await create_connection(db)
     cursor = await conn.cursor()
 
     if shop_name == "":
-        await cursor.execute("SELECT id FROM shops WHERE fk_tg_id=? AND api_key=?", (telegram_id, api_key))
+        await cursor.execute("SELECT id FROM shops WHERE api_key=?", (api_key, ))
     else:
         await cursor.execute("SELECT id FROM shops WHERE fk_tg_id=? AND shop_name=?", (telegram_id, shop_name))
         
@@ -39,7 +39,7 @@ async def get_shop_id(telegram_id:int, api_key="", shop_name="", db=path) -> int
     if found_id is None:
         return False
     
-    return found_id
+    return found_id[0]
     
     
 async def delete_shop(telegram_id:int, api_key="", shop_name="", db=path) -> bool:
@@ -129,8 +129,6 @@ async def get_apis_list(telegram_id: int, db=path) -> list[:str] | None:
     await cursor.execute("SELECT api_key FROM shops WHERE fk_tg_id=?", (telegram_id, ))
     
     list_of_apis = await cursor.fetchall()
-    
-    print(list_of_apis)
     
     await cursor.close()
     await conn.commit()

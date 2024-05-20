@@ -3,7 +3,7 @@ from aiogram import Bot, Dispatcher
 from openai import AsyncOpenAI
 
 from app.handlers.message_handler import router_main
-from api.scheduler.scheduler import scheduled_db_scan_job
+from api.scheduler.scheduler import scheduled_db_fill_job
 
 from dotenv import load_dotenv
 
@@ -22,7 +22,7 @@ async def main():
         base_url="https://api.proxyapi.ru/openai/v1"
     )
     
-    scheduler.add_job(scheduled_db_scan_job, trigger='interval', seconds=10)
+    scheduler.add_job(scheduled_db_fill_job, trigger='interval', seconds=10)
     dp.include_router(router_main)
     
     scheduler.start()

@@ -12,8 +12,16 @@ async def get_feedback(api_key: str) -> None:
     
     async with aiohttp.ClientSession() as session:
         async with session.get(url, params=params, headers=headers) as resp:
+            if resp.status != 200:
+                print("ОШИБКА ПРИ ЗАПРОСЕ!!!", resp.status)
+                return None
+            
             res = await resp.json()
             
-            print("Это должно вылезать каждые 10 секунд!\n", res, "\n\n")
+            if res['data']['countUnanswered'] == 0:
+                print("У пользователя нет отзывов")
+                return None
             
-    return None
+            return res
+        
+        

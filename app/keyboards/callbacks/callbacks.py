@@ -18,8 +18,8 @@ support = "support"
 
 balance_replenishment = "pay_money"
 
-last_5_answers = "answer_last5"
-show_more = "answer_show_more"
+unanswered = "unanswered"
+archive_fb = "archive_fb"
 
 yes_auto = "auto_yes"
 no_auto = "auto_no"
