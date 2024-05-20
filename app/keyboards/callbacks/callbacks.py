@@ -30,3 +30,6 @@ setting_auto="set_new_auto"
 
 generate = "gen_"
 show_more = "show_more"
+
+publish = "publish"
+edit_generated = "edit"

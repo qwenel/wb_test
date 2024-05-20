@@ -72,6 +72,12 @@ chosen_shop_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
 ])
 
+generated_answer_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Опубликовать ответ", callback_data=cb.publish)],
+    [InlineKeyboardButton(text="Редактировать", callback_data=cb.edit_generated)]
+])
+
+
 async def shop_list_build(telegram_id: int) -> InlineKeyboardMarkup:
     got_list = await db_shop.get_shops_list(telegram_id)
     

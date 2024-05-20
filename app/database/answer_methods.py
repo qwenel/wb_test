@@ -3,7 +3,7 @@ from app.database.shop_methods import get_shop_id
 from ..database.connection import create_connection
 
 
-async def get_feedback_id(fb_id:int, db=path) -> int | bool:
+async def get_feedback_id(fb_id:str, db=path) -> int | bool:
     conn = await create_connection(db)
     cursor = await conn.cursor()
     
@@ -21,7 +21,7 @@ async def get_feedback_id(fb_id:int, db=path) -> int | bool:
     return got_id[0]
 
 
-async def fill_unanswered_feedbacks(fb_id: int, fb_rating:str, fb_shop_wb:str, fb_product_wb:str, fb_text:str, api_key:str, db=path) -> bool:
+async def fill_unanswered_feedback(fb_id: str, fb_rating:int, fb_shop_wb:str, fb_product_wb:str, fb_text:str, api_key:str, db=path) -> bool:
     if await get_feedback_id(fb_id) != False:
         return False
     
@@ -38,6 +38,24 @@ async def fill_unanswered_feedbacks(fb_id: int, fb_rating:str, fb_shop_wb:str, f
     await conn.close()
     
     return True
+
+
+async def get_feedback(fb_id:str, db=path) -> bool | list:
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT fb_rating, fb_shop_wb, fb_product_wb, fb_text FROM feedbacks WHERE fb_id=?", (fb_id, ))
+    
+    got_feedback = await cursor.fetchone()
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    if got_feedback is None:
+        return False
+
+    return got_feedback
 
 
 async def get_unanswered_fb_list(telegram_id:int, db=path) -> bool | list:

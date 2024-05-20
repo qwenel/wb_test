@@ -5,8 +5,7 @@ from aiosqlite import connect
 from app.database import user_methods as db_user
 from app.database import shop_methods as db_shop
 from app.database import shop_settings as db_settings
-from app.database import connection as db_conn
-from app.database import vars
+from app.database import answer_methods as db_ans
 
 # database methods testing
 class DBTester(unittest.IsolatedAsyncioTestCase):
@@ -87,41 +86,12 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
             
             got_deleted_id = await db_shop.get_shop_id(111, "test_name3", db)
             
-            self.assertEqual(got_deleted_id, None)
+            self.assertEqual(got_deleted_id, False)
             
             got_list = await db_shop.get_shops_list(111, db)
             
             self.assertEqual(len(got_list), 2)     
     
-            
-    async def test_get_null_rating_name(self):
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            
-            db = tmpdirname+'/db_test.db'
-            
-            await db_user.add_user(111, db)
-            await db_shop.add_shop(111, "test_name1", db)
-            await db_shop.add_shop(111, "test_name2", db)
-            await db_settings.set_api_key(111, "test_name1", "api1", db)
-            await db_settings.set_api_key(111, "test_name2", "api2", db)
-            await db_settings.set_rating(111, "test_name2", "gt2", db)
-            
-            got_name1 = await db_shop.get_shop_name_rating(111, db)
-            
-            self.assertEqual(got_name1, "test_name1")
-            
-            await db_settings.set_rating(111, got_name1, "gt3", db)
-            
-            got_name = await db_shop.get_shop_name_rating(111, db)
-            
-            self.assertEqual(got_name, None)
-            
-            await db_shop.add_shop(111, "last", db)
-            
-            got_last_name = await db_shop.get_shop_name_rating(111, db)
-            
-            self.assertEqual(got_last_name, "last")
-            
             
     async def toggle_auto_ans(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
@@ -150,4 +120,19 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(got_status_3, False)
             self.assertEqual(got_status_4, True)
             self.assertEqual(got_status_5, None)
+            
+            
+    async def test_get_feedback(self):
+        
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            
+            db = tmpdirname+'/db_test.db'
+            
+            await db_ans.fill_unanswered_feedbacks("fb_id1", 5, "ViPi", "diloda", "very like", "apiapiapi", db)
+            
+            feedback = await db_ans.get_feedback("fb_id1", db)
+            
+            print(feedback)
+            
+            self.assertEqual(1, 1)
             

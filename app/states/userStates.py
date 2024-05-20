@@ -20,3 +20,5 @@ class UserStates(StatesGroup):
     chosen_shop = State()
     unanswered = State()
     generator_is_on = State()
+    generated = State()
+    editing = State()

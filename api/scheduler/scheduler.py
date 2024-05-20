@@ -1,6 +1,6 @@
 from app.database.user_methods import get_users_with_balance
 from app.database.shop_methods import get_apis_list
-from app.database.answer_methods import fill_unanswered_feedbacks
+from app.database.answer_methods import fill_unanswered_feedback
 from api.wb.wb_feedbacks_ans import get_feedback
 
 
@@ -36,7 +36,7 @@ async def scheduled_db_fill_job() -> bool:
                 fb_product_wb = got_feedback['data']['feedbacks'][i]['productDetails']['productName']
                 fb_text = got_feedback['data']['feedbacks'][i]['text']
             
-                if not await fill_unanswered_feedbacks(fb_id, fb_rating, fb_shop_wb, fb_product_wb, fb_text, api_key):
+                if not await fill_unanswered_feedback(fb_id, fb_rating, fb_shop_wb, fb_product_wb, fb_text, api_key):
                     print("ошибка при заполнении новых отзывов в БД")
                     return False
                 
