@@ -108,11 +108,15 @@ async def get_shops_list(telegram_id: int, db=path) -> list:
     await cursor.execute("SELECT shop_name FROM shops WHERE fk_tg_id=?", (telegram_id, ))
     
     list_of_shops = await cursor.fetchall()
-    formatted_list = [shop_cortage[0] for shop_cortage in list_of_shops]
     
     await cursor.close()
     await conn.commit()
     await conn.close()
+    
+    if list_of_shops is None:
+        return None
+    
+    formatted_list = [shop_cortage[0] for shop_cortage in list_of_shops]
     
     return formatted_list
 
@@ -126,14 +130,16 @@ async def get_apis_list(telegram_id: int, db=path) -> list[:str] | None:
     
     list_of_apis = await cursor.fetchall()
     
-    if list_of_apis is None:
-        return None
-    
-    formatted_list = [api_cortage[0] for api_cortage in list_of_apis]
+    print(list_of_apis)
     
     await cursor.close()
     await conn.commit()
     await conn.close()
+    
+    if len(list_of_apis) == 0:
+        return None
+    
+    formatted_list = [api_cortage[0] for api_cortage in list_of_apis]
     
     return formatted_list
 

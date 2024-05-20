@@ -1,20 +1,19 @@
-# import aiohttp
-# import asyncio
+import aiohttp
+import asyncio
 
-# from api.wb.wb_init import url, params
+from api.wb.wb_init import url, params
 
 
-# async def get_feedback(api_key: str) -> None | dict[dict][list][int][str]:
+async def get_feedback(api_key: str) -> None:
     
-#     headers = {
-#         'Authorization': api_key
-#     }
+    headers = {
+        'Authorization': api_key
+    }
     
-#     async with aiohttp.ClientSession() as session:
-#         async with session.get(url, params=params, headers=headers) as resp:
-#             res = await resp.json()
-
-#             print(res)
-
-
-# asyncio.run(get_feedback())
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params, headers=headers) as resp:
+            res = await resp.json()
+            
+            print("Это должно вылезать каждые 10 секунд!\n", res, "\n\n")
+            
+    return None

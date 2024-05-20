@@ -68,7 +68,7 @@ async def get_users_with_balance(db=path) -> dict[:int, :int] | None:
     if got_balance_users is None:
         return None
     
-    users_with_balance = [{user[0], user[1]} for user in got_balance_users]
+    users_with_balance = {user[0]: user[1] for user in got_balance_users}
     
     return users_with_balance
 
