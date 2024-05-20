@@ -107,7 +107,7 @@ async def unanswered_last(fb_id: str) -> InlineKeyboardMarkup:
     
     builder.button(text="Сгенерировать", callback_data=cb.generate+fb_id)
     builder.button(text="Загрузить ещё 5", callback_data=cb.show_more)
-    builder.button(text="Назад ↩️", callback_data=cb.unanswered)
+    builder.button(text="Назад ↩️", callback_data=cb.answers)
     builder.button(text="Главное меню", callback_data=cb.main_menu)
     
     builder.adjust(1, True)

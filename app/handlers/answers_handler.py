@@ -2,6 +2,7 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 
+from app.keyboards.inlineKeyboards import unanswered_last
 import app.keyboards.callbacks.callbacks as cb
 from ..states.userStates import UserStates
 
@@ -41,9 +42,7 @@ async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
                                             f"Магазин: {unanswered_feedbacks[i][1]}\n"+
                                             f"Товар: {unanswered_feedbacks[i][2]}\n"+
                                             f"Текст:\n{unanswered_feedbacks[i][3]}",
-                                            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                                                [InlineKeyboardButton(text="Сгенерировать", callback_data=cb.generate+unanswered_feedbacks[0][4])]
-                                            ]))
+                                            reply_markup=await unanswered_last(unanswered_feedbacks[i][4]))
         
         
 
