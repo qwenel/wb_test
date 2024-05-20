@@ -4,7 +4,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 
 from ..database.user_methods import (
-    add_user, get_balance, get_users
+    add_user, get_balance
 )
 
 from ..keyboards.inlineKeyboards import (

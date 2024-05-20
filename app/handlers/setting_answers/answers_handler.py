@@ -80,7 +80,7 @@ async def no_auto_answer(callback_query: CallbackQuery, state: FSMContext):
     
     if not await toggle_manual_ans(callback_query.from_user.id, data["shop_name"]):
         callback_query.message.answer(text="Произошла непредвиденная ошибка.",
-                                      reply_markup=in_kb.go_to_main_menu_keyboard)
+                                      reply_markup=await in_kb.go_back_from_settings_errors_kb(data["shop_name"]))
     
     await callback_query.message.edit_text(text="Принято, Босс)\n\nПошел работать!\n\n"+
                                            "Я буду отвечать на отзывы в РУЧНОМ режиме",
@@ -116,7 +116,7 @@ async def toggle_to_auto(callback_query: CallbackQuery, state: FSMContext):
     
     if not await toggle_auto_ans(callback_query.from_user.id, data["shop_name"]):
         await callback_query.message.answer(text="Произошла непредвиденная ошибка.",
-                                      reply_markup=in_kb.go_to_main_menu_keyboard)        
+                                      reply_markup=await in_kb.go_back_from_settings_errors_kb(data["shop_name"]))        
     
     await callback_query.message.edit_text(text="Принято, Босс)\n\nПошел работать!\n\n"+
                                            "Я будет отвечать на отзывы в АВТОМАТИЧЕСКОМ режиме",

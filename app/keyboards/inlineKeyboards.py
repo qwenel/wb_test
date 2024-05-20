@@ -87,3 +87,15 @@ async def shop_list_build(telegram_id: int) -> InlineKeyboardMarkup:
     builder.adjust(1, True)
     
     return builder.as_markup()
+
+
+async def go_back_from_settings_errors_kb(shop_name : str) -> InlineKeyboardMarkup:
+
+    builder = InlineKeyboardBuilder()
+    
+    builder.button(text="Назад ↩️", callback_data=cb.settings+shop_name)
+    builder.button(text="Главное меню", callback_data=cb.main_menu)
+    
+    builder.adjust(1, True)
+    
+    return builder.as_markup()

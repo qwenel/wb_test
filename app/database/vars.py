@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS feedbacks (
 	id INTEGER PRIMARY KEY,
 	fb_text TEXT NOT NULL,
 	answer TEXT,
+	is_shown BOOLEAN,
+	show_date DEFAULT "HH:MM:SS",
 	fk_shop_id INTEGER REFERENCES shops(id)
 );
 """

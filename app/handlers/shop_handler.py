@@ -44,7 +44,7 @@ async def ask_shop_name(callback_query: CallbackQuery, state: FSMContext):
 async def got_shop_name(message : Message, state: FSMContext):
     await delete_shop_if_null(message.from_user.id)
     
-    if not await add_shop(message.chat.id, message.text):
+    if not await add_shop(telegram_id=message.chat.id, shop_name=message.text):
         await message.answer(text="Название магазина некорректно!\n"+
                        "\nПроверьте, пожалуйста, соблюдение следующих критериев:\n"+
                        "\t - Длина названия магазина должна быть не более 32 символов\n"+
@@ -91,10 +91,11 @@ async def del_shop(callback_query: CallbackQuery, state: FSMContext):
     
     shop_to_delete = data["shop_name"]
     
-    if not await delete_shop(callback_query.from_user.id, shop_to_delete):
+    if not await delete_shop(callback_query.from_user.id, shop_name=shop_to_delete):
+        await state.set_state(UserStates.shop_list)
         await callback_query.message.answer(text="По какой-то причине удаление невозможно\n\n"+
                                       "Извините за предоставленные неудобства, разбираемся...",
-                                      reply_markup=in_kb.go_back_from_delete_keyboard)
+                                      reply_markup=await in_kb.go_back_from_settings_errors_kb(shop_to_delete))
     
     await state.clear()
     await state.set_state(UserStates.menu)
