@@ -23,5 +23,26 @@ async def get_feedback(api_key: str) -> None:
                 return None
             
             return res
-        
-        
+
+
+async def answer_feedback(fb_id:str, ans_text:str, api_key:str) -> bool:
+    
+    headers = {
+        'Authorization': api_key
+    }
+    
+    _params = {
+        "id": fb_id,
+        "text":ans_text 
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.patch(url, params=_params, headers=headers) as resp:
+            if resp.status != 200:
+                print("ОШИБКА ПРИ ОТВЕТЕ!!!", resp.status)
+                return False
+            
+            res = await resp.json()
+            print(res)
+            
+            return True

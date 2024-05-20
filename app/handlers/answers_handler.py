@@ -6,7 +6,7 @@ from app.keyboards.inlineKeyboards import unanswered_last, generated_answer_keyb
 import app.keyboards.callbacks.callbacks as cb
 from ..states.userStates import UserStates
 
-from app.database.answer_methods import get_unanswered_fb_list, get_feedback
+from app.database.answer_methods import get_unanswered_fb_list, get_feedback, update_answer_text
 
 
 router_answers = Router()
@@ -75,6 +75,8 @@ async def edit_generated(callback_query:CallbackQuery, state: FSMContext):
 async def check_edited(message: Message, state: FSMContext):
     await state.set_state(UserStates.generated)
     
+    await state.update_data(answer=message.text)
+    
     data = await state.get_data()
 
     feedback = await get_feedback(data['fb_id'])
@@ -91,14 +93,23 @@ async def check_edited(message: Message, state: FSMContext):
 
 @router_answers.callback_query(UserStates.generated, F.data==cb.publish)
 async def publishing(callback_query:CallbackQuery, state:FSMContext):
-    await state.clear()
-    await state.set_state(UserStates.menu)
-    
     await callback_query.answer()
+    
+    data = await state.get_data()
+
+    feedback = data['fb_id']
+    answer = data['answer']
+    
+    await update_answer_text(feedback, answer)
     
     await callback_query.message.answer(text="Отлично, работаю над публикацией, спасибо за доверие!",
                                         reply_markup=go_to_main_menu_keyboard)
-
+    
+    # TODO: вызов функции ответа на отзыв
+    
+    await state.clear()
+    await state.set_state(UserStates.menu)
+    
 
 @router_answers.callback_query(F.data==cb.archive_fb)
 async def show_more_answers(callback_query: CallbackQuery, state: FSMContext):

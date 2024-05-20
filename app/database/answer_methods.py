@@ -74,3 +74,14 @@ async def get_unanswered_fb_list(telegram_id:int, db=path) -> bool | list:
         return False
 
     return list_of_fb
+
+
+async def update_answer_text(fb_id:str, ans_text:str, db=path):
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("UPDATE feedbacks SET fb_answer=? WHERE fb_id=?", (ans_text, fb_id))
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
