@@ -1,13 +1,12 @@
-# from app.database.user_methods import get_users_with_balance
-# from app.database.shop_methods import get_apis_list
-# from ..wb.wb_feedbacks_ans import get_feedback
+from app.database.user_methods import get_users_with_balance
+from app.database.shop_methods import get_apis_list
 
-<<<<<<< HEAD
 
-async def scheduled_db_scan_job() -> bool:
-=======
+async def test_sched() -> None:
+    print("Scheduler работает каждые 10 секунд")
+
+
 # async def scheduled_db_scan_job() -> bool:
->>>>>>> tmp
     
 #     users_with_balance = await get_users_with_balance()
     
