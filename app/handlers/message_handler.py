@@ -1,6 +1,6 @@
 from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 
 from ..database.user_methods import (
@@ -15,7 +15,7 @@ from ..keyboards.inlineKeyboards import (
 from ..states.userStates import UserStates
 from .shop_handler import router_shop
 from .balance_handler import router_balance
-from .answers_handler import router_answers
+from .feedbacks_handler import router_answers
 
 import app.keyboards.callbacks.callbacks as cb
 

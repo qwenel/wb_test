@@ -31,11 +31,6 @@ go_to_main_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
 ])
 
-go_back_from_delete_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.delete_shop)],
-    [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
-])
-
 starting_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Добавить магазин", callback_data=cb.add_shop)],
     [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
@@ -65,9 +60,8 @@ main_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
 ])
 
 chosen_shop_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text="Сменить фильтр рейтинга", callback_data=cb.switch_rating)],
-    [InlineKeyboardButton(text="Сменить режим обработки отзывов", callback_data=cb.setting_auto)],
-    [InlineKeyboardButton(text="Удалить магазин", callback_data=cb.delete_shop)],
+    [InlineKeyboardButton(text="Режим обработки ответов и фильтры оценок", callback_data=cb.setting_auto)],
+    [InlineKeyboardButton(text="Удалить магазин", callback_data=cb.setting_delete)],
     [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.shop_list)],
     [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
 ])

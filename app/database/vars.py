@@ -13,8 +13,7 @@ CREATE TABLE IF NOT EXISTS shops (
 	id INTEGER PRIMARY KEY,
   	shop_name TEXT NOT NULL,
     api_key TEXT UNIQUE,
-  	rating TEXT,
-    auto_ans BOOLEAN DEFAULT 0,
+  	rating TEXT DEFAULT "0",
   	fk_tg_id INTEGER REFERENCES users(tg_id)
 );
 

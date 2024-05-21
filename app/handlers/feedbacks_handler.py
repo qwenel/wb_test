@@ -27,6 +27,8 @@ async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
         await state.clear()
         return
     
+    await callback_query.message.answer(text="⬇️Ниже вы видите список отзывов, которые ждут ответов!⬇️")
+    
     for i in range(len(unanswered_feedbacks)):
         if i != len(unanswered_feedbacks) - 1:
             await callback_query.message.answer(text="ОТЗЫВ\n\n"+
@@ -100,7 +102,8 @@ async def publishing(callback_query:CallbackQuery, state:FSMContext):
     
     await update_answer_text(feedback, answer)
     
-    await callback_query.message.answer(text="Отлично, работаю над публикацией, спасибо за доверие!",
+    await callback_query.message.answer(text="Отлично, работаю над публикацией. . .\n\n" +
+                                        "Спасибо за использование наших инструментов!",
                                         reply_markup=go_to_main_menu_keyboard)
     
     # TODO: вызов функции ответа на отзыв

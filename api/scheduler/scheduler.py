@@ -18,8 +18,6 @@ async def scheduled_db_fill_job() -> bool:
     
     for user_id in users_with_balance:
         got_apis_for_user_id = await get_apis_list(user_id)
-
-        print(got_apis_for_user_id)
         
         if got_apis_for_user_id is None:
             print("по какой-то причине у пользователя нет магазинов")
