@@ -21,7 +21,8 @@ async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
     unanswered_feedbacks = await get_unanswered_fb_list(callback_query.from_user.id)
     
     if unanswered_feedbacks == False:
-        await callback_query.message.answer(text="увы нет отзывов")
+        await callback_query.message.answer(text="увы нет новых или неотвеченных отзывов",
+                                            reply_markup=go_to_main_menu_keyboard)
         await state.set_state(UserStates.menu)
         await state.clear()
         return
@@ -47,7 +48,6 @@ async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
 
 @router_answers.callback_query(UserStates.unanswered, F.data[:4] == cb.generate)
 async def generate(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(UserStates.generated)
     
     await state.update_data(fb_id=callback_query.data[4:])
     await state.update_data(answer="Сгенерировал ответ!")
@@ -60,9 +60,8 @@ async def generate(callback_query: CallbackQuery, state: FSMContext):
                                            reply_markup=generated_answer_keyboard)
     
     
-@router_answers.callback_query(UserStates.generated, F.data==cb.edit_generated)
+@router_answers.callback_query(UserStates.unanswered, F.data==cb.edit_generated)
 async def edit_generated(callback_query:CallbackQuery, state: FSMContext):
-    await state.set_state(UserStates.editing)
     
     await callback_query.answer()
     
@@ -73,7 +72,6 @@ async def edit_generated(callback_query:CallbackQuery, state: FSMContext):
     
 @router_answers.message(UserStates.editing)
 async def check_edited(message: Message, state: FSMContext):
-    await state.set_state(UserStates.generated)
     
     await state.update_data(answer=message.text)
     
@@ -91,7 +89,7 @@ async def check_edited(message: Message, state: FSMContext):
                         reply_markup=generated_answer_keyboard)
 
 
-@router_answers.callback_query(UserStates.generated, F.data==cb.publish)
+@router_answers.callback_query(UserStates.unanswered, F.data==cb.publish)
 async def publishing(callback_query:CallbackQuery, state:FSMContext):
     await callback_query.answer()
     

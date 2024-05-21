@@ -121,12 +121,12 @@ async def get_shops_list(telegram_id: int, db=path) -> list:
     return formatted_list
 
 
-async def get_apis_list(telegram_id: int, db=path) -> list[:str] | None:
+async def get_apis_list(telegram_id: int, db=path) -> list[str] | None:
   
     conn = await create_connection(db)
     cursor = await conn.cursor()
     
-    await cursor.execute("SELECT api_key FROM shops WHERE fk_tg_id=?", (telegram_id, ))
+    await cursor.execute("SELECT api_key FROM shops WHERE fk_tg_id=? AND api_key IS NOT NULL", (telegram_id, ))
     
     list_of_apis = await cursor.fetchall()
     

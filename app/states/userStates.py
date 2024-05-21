@@ -12,7 +12,7 @@ class UserStates(StatesGroup):
     balance_menu = State()
     balance_replenishment = State()
     support_menu = State()
-    answer_menu = State()
+    answers_menu = State()
     show_last_answers = State()
     show_more_answers = State()
     awaiting_auto_choose = State()

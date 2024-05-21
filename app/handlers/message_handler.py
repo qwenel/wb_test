@@ -64,11 +64,9 @@ async def shop_list(callback_query: CallbackQuery, state: FSMContext):
 # BOT Answers
 @router_main.callback_query(F.data==cb.answers)
 async def answers_menu(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(UserStates.answer_menu)
-    
-    x = 5
-    
-    await callback_query.message.edit_text(text=f"Я ответил на {x} отзывов! Все в порядке, я справлюсь, Босс)",
+    await state.set_state(UserStates.answers_menu)
+
+    await callback_query.message.edit_text(text="Здесь вы можете посмотреть архивные и неотвеченные отзывы. Что хотите посмотреть?",
                                            reply_markup=answers_menu_keyboard)
     
     await callback_query.answer()

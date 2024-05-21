@@ -128,11 +128,52 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
             
             db = tmpdirname+'/db_test.db'
             
-            await db_ans.fill_unanswered_feedbacks("fb_id1", 5, "ViPi", "diloda", "very like", "apiapiapi", db)
+            await db_ans.fill_unanswered_feedback("fb_id1", 5, "ViPi", "diloda", "very like", "apiapiapi", db)
             
             feedback = await db_ans.get_feedback("fb_id1", db)
             
-            print(feedback)
+            self.assertEqual(feedback, (5, 'ViPi', 'diloda', 'very like'))
             
-            self.assertEqual(1, 1)
+    
+    async def test_answers_check(self):
+        
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            
+            db = tmpdirname+'/db_test.db'
+            
+            await db_user.add_user(111, db)
+            
+            await db_shop.add_shop(111, "ViPi", db)
+            
+            await db_settings.set_api_key(111, "ViPi", "api_key1", db)
+            
+            await db_ans.fill_unanswered_feedback("fb_id1", 5, "ViPi", "dildos", "like it", "api_key1", db)
+            
+            await db_ans.update_answer_text("fb_id1", "ANSWER TEXT TeST", db)
+            
+            got_answer = await db_ans.get_answer(111, "ViPi", db)
+            
+            self.assertEqual(got_answer, "ANSWER TEXT TeST")
+            
+            
+    async def test_get_null_answers_feedbacks_list(self):
+        
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            
+            db = tmpdirname+'/db_test.db'
+            
+            await db_user.add_user(111, db)
+            await db_shop.add_shop(111, "ViPi", db)
+            await db_settings.set_api_key(111, "ViPi", "api_key1", db)
+            
+            await db_ans.fill_unanswered_feedback("fb_id1", 5, "ViPi", "dildos", "like it1", "api_key1", db)
+            await db_ans.fill_unanswered_feedback("fb_id2", 5, "ViPi", "dildos", "like it2", "api_key1", db)
+            await db_ans.fill_unanswered_feedback("fb_id3", 5, "ViPi", "dildos", "like it3", "api_key1", db)
+            
+            await db_ans.update_answer_text("fb_id1", "ANSWER TEXT TeST", db)
+            
+            got_null_answer_feedbacks_list = await db_ans.get_unanswered_fb_list(111, db)
+                        
+            for i in range(len(got_null_answer_feedbacks_list)):
+                self.assertEqual(got_null_answer_feedbacks_list[i], (5, 'ViPi', 'dildos', f'like it{i+2}', f'fb_id{i+2}'))
             

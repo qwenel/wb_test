@@ -28,6 +28,6 @@ CREATE TABLE IF NOT EXISTS feedbacks (
   	fb_answer TEXT,
 	is_shown BOOLEAN DEFAULT 0,
 	show_date DEFAULT "HH:MM:SS",
-	fk_shop_id INTEGER REFERENCES shops(id)
+	fk_api_key INTEGER REFERENCES shops(api_key)
 );
 """
