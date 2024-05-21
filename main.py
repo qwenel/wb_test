@@ -16,11 +16,7 @@ async def main():
     bot = Bot(token=os.getenv('TOKEN_BOT'))
     dp = Dispatcher()
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
-    
-    client = AsyncOpenAI(
-        api_key=os.getenv('OPENAI_API_KEY'),
-        base_url="https://api.proxyapi.ru/openai/v1"
-    )
+
     
     scheduler.add_job(scheduled_db_fill_job, trigger='interval', seconds=10)
     dp.include_router(router_main)

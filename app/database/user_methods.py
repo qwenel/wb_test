@@ -87,3 +87,20 @@ async def get_balance(telegram_id: int, db=path) -> int | None:
     if got_balance is None:
         return None
     return got_balance[0]
+
+
+async def update_user_props_after_generating(telegram_id:int, db=path) -> bool:
+    
+    if await get_user(telegram_id, db) == -1:
+        return False
+    
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("UPDATE users SET balance=balance-1, count_ans=count_ans+1 WHERE tg_id=?", (telegram_id, ))
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    return True

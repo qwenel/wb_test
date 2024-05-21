@@ -56,6 +56,24 @@ async def get_feedback(fb_id:str, db=path) -> bool | list:
     return got_feedback
 
 
+async def get_feedback_to_generate_answer(fb_id:str, db=path) -> bool | list:
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT fb_text, fk_api_key FROM feedbacks WHERE fb_id=?", (fb_id, ))
+    
+    got_feedback = await cursor.fetchone()
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    if got_feedback is None:
+        return False
+
+    return got_feedback
+
+
 async def get_unanswered_fb_list(telegram_id:int, db=path) -> bool | list:
     conn = await create_connection(db)
     cursor = await conn.cursor()

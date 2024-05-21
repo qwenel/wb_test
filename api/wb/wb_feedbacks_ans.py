@@ -1,10 +1,9 @@
 import aiohttp
-import asyncio
 
 from api.wb.wb_init import url, params
 
 
-async def get_feedback(api_key: str) -> None:
+async def get_feedbacks(api_key: str) -> dict | None:
     
     headers = {
         'Authorization': api_key
@@ -39,7 +38,7 @@ async def answer_feedback(fb_id:str, ans_text:str, api_key:str) -> bool:
     async with aiohttp.ClientSession() as session:
         async with session.patch(url, params=_params, headers=headers) as resp:
             if resp.status != 200:
-                print("ОШИБКА ПРИ ОТВЕТЕ!!!", resp.status)
+                print("Ошибка при отправке PATCH запроса.", resp.status)
                 return False
             
             res = await resp.json()
