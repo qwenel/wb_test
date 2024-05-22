@@ -16,7 +16,7 @@ from app.database.answer_methods import (
 router_unanswered = Router()
 
 
-@router_answers.callback_query(F.data==cb.unanswered)
+@router_unanswered.callback_query(F.data==cb.unanswered)
 async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.unanswered)
     
@@ -52,8 +52,10 @@ async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
                                             reply_markup=await unanswered_last(unanswered_feedbacks[i][4]))
         
 
-@router_answers.callback_query(UserStates.unanswered, F.data[:4] == cb.generate)
+@router_unanswered.callback_query(UserStates.unanswered, F.data[:4] == cb.generate)
 async def generate(callback_query: CallbackQuery, state: FSMContext):
+    
+    
     
     await state.update_data(fb_id=callback_query.data[4:])
 
@@ -79,7 +81,7 @@ async def generate(callback_query: CallbackQuery, state: FSMContext):
                                            reply_markup=generated_answer_keyboard)
     
     
-@router_answers.callback_query(UserStates.unanswered, F.data==cb.edit_generated)
+@router_unanswered.callback_query(UserStates.unanswered, F.data==cb.edit_generated)
 async def edit_generated(callback_query:CallbackQuery, state: FSMContext):
     
     await callback_query.answer()
@@ -89,7 +91,7 @@ async def edit_generated(callback_query:CallbackQuery, state: FSMContext):
                                         "\t • Вставьте скопированный текст в поле для ввода\n"+
                                         "\t • Отредактируйте отзыв и отправьте его мне!")
     
-@router_answers.message(UserStates.editing)
+@router_unanswered.message(UserStates.editing)
 async def check_edited(message: Message, state: FSMContext):
     
     await state.update_data(answer=message.text)
@@ -108,7 +110,7 @@ async def check_edited(message: Message, state: FSMContext):
                         reply_markup=generated_answer_keyboard)
 
 
-@router_answers.callback_query(UserStates.unanswered, F.data==cb.publish)
+@router_unanswered.callback_query(UserStates.unanswered, F.data==cb.publish)
 async def publishing(callback_query:CallbackQuery, state:FSMContext):
     await callback_query.answer()
     
@@ -124,6 +126,3 @@ async def publishing(callback_query:CallbackQuery, state:FSMContext):
                                         reply_markup=go_to_main_menu_keyboard)
     
     # TODO: вызов функции ответа на отзыв
-    
-    await state.clear()
-    await state.set_state(UserStates.menu)

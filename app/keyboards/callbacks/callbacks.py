@@ -29,6 +29,7 @@ setting_auto="set_new_auto"
 
 generate = "gen_"
 show_more = "show_more"
+archive_last_5 = "arch_last_5"
 
 publish = "publish"
 edit_generated = "edit"

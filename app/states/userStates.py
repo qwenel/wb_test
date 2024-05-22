@@ -14,7 +14,7 @@ class UserStates(StatesGroup):
     support_menu = State()
     answers_menu = State()
     show_last_answers = State()
-    show_more_answers = State()
+    archive = State()
     awaiting_auto_choose = State()
     toggle_auto = State()
     chosen_shop = State()
@@ -22,3 +22,4 @@ class UserStates(StatesGroup):
     generator_is_on = State()
     generated = State()
     editing = State()
+    awaiting_publish = State()

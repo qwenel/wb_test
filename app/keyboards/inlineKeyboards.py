@@ -24,6 +24,7 @@ balance_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
 answers_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Архивные", callback_data=cb.archive_fb)],
     [InlineKeyboardButton(text="Отзывы без ответов", callback_data=cb.unanswered)],
+    [InlineKeyboardButton(text="Добавить отзыв рандомный", callback_data="adder")],
     [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.main_menu)]
 ])
 
@@ -70,6 +71,34 @@ generated_answer_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Опубликовать ответ", callback_data=cb.publish)],
     [InlineKeyboardButton(text="Редактировать", callback_data=cb.edit_generated)]
 ])
+
+archive_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Список последних 5", callback_data=cb.archive_last_5)],
+    [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.answers)],
+    [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
+])
+
+archive_menu_on_last_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Загрузить ещё", callback_data=cb.show_more)],
+    [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.archive_fb)],
+    [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
+])
+
+
+async def archive_menu_on_last_keyboard(less_than_five: bool) -> InlineKeyboardMarkup:
+    
+    builder = InlineKeyboardBuilder()
+    
+    if not less_than_five:
+        builder.button(text="Загрузить ещё", callback_data=cb.show_more)
+    
+    builder.button(text="Назад ↩️", callback_data=cb.archive_fb)
+    
+    builder.button(text="Главное меню", callback_data=cb.main_menu)
+    
+    builder.adjust(1, True)
+    
+    return builder.as_markup()
 
 
 async def shop_list_build(telegram_id: int) -> InlineKeyboardMarkup:

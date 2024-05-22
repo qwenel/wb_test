@@ -89,6 +89,22 @@ async def get_balance(telegram_id: int, db=path) -> int | None:
     return got_balance[0]
 
 
+async def get_answers_counter(telegram_id: int, db=path) -> int | None:
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT count_ans FROM users WHERE tg_id=?", (telegram_id, ))
+    got_counter = await cursor.fetchone()
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    if got_counter is None:
+        return None
+    return got_counter[0]
+
+
 async def update_user_props_after_generating(telegram_id:int, db=path) -> bool:
     
     if await get_user(telegram_id, db) == -1:
