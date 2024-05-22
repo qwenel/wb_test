@@ -54,9 +54,7 @@ async def show_unanswered(callback_query: CallbackQuery, state: FSMContext):
 
 @router_unanswered.callback_query(UserStates.unanswered, F.data[:4] == cb.generate)
 async def generate(callback_query: CallbackQuery, state: FSMContext):
-    
-    
-    
+ 
     await state.update_data(fb_id=callback_query.data[4:])
 
     got_feedback = await get_feedback_to_generate_answer(callback_query.data[4:])
