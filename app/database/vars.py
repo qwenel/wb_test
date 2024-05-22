@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS feedbacks (
 	fb_product_wb TEXT,	
  	fb_text TEXT NOT NULL,
   	fb_answer TEXT,
-	is_shown BOOLEAN DEFAULT 0,
-	show_date DEFAULT "0",
+	show_date TEXT DEFAULT "0",
 	fk_api_key INTEGER REFERENCES shops(api_key)
 );
 """

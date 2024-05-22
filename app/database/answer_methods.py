@@ -150,7 +150,7 @@ async def get_not_null_answer_feedbacks_list(telegram_id:int, db=path) -> list |
     conn = await create_connection(db)
     cursor = await conn.cursor()
     
-    await cursor.execute("SELECT fb.fb_rating, fb.fb_shop_wb, fb.fb_product_wb, fb.fb_text, fb.fb_answer FROM feedbacks fb LEFT JOIN shops sh on sh.api_key=fb.fk_api_key LEFT JOIN users u on u.tg_id=sh.fk_tg_id WHERE u.tg_id=? AND fb.fb_answer IS NOT NULL", (telegram_id, ))
+    await cursor.execute("SELECT fb.fb_rating, fb.fb_shop_wb, fb.fb_product_wb, fb.fb_text, fb.fb_answer, fb.fb_id FROM feedbacks fb LEFT JOIN shops sh on sh.api_key=fb.fk_api_key LEFT JOIN users u on u.tg_id=sh.fk_tg_id WHERE u.tg_id=? AND fb.fb_answer IS NOT NULL", (telegram_id, ))
     
     list_of_feedbacks = await cursor.fetchall()
     
@@ -172,6 +172,28 @@ async def update_answer_text(fb_id:str, ans_text:str, db=path):
         await cursor.execute("UPDATE feedbacks SET fb_answer=null WHERE fb_id=?", (fb_id, ))
     else:
         await cursor.execute("UPDATE feedbacks SET fb_answer=? WHERE fb_id=?", (ans_text, fb_id))
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    
+async def mark_shown_feedback(fb_id: str, db=path):
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+
+    await cursor.execute("UPDATE feedbacks SET show_date=datetime('now', '+3 hours') WHERE fb_id=?", (fb_id, ))
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    
+async def delete_old_shown_feedback(db=path):
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+
+    await cursor.execute("DELETE FROM feedbacks WHERE datetime('now', '+3 hours') > datetime(show_date, '+24 hours') AND show_date != 0")
     
     await cursor.close()
     await conn.commit()

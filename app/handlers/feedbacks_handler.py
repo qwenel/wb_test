@@ -3,7 +3,7 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from app.database.answer_methods import fill_unanswered_feedback, get_not_null_answer_feedbacks_list
+from app.database.answer_methods import fill_unanswered_feedback, get_not_null_answer_feedbacks_list, mark_shown_feedback
 from app.database.user_methods import get_answers_counter
 import app.keyboards.callbacks.callbacks as cb
 from ..states.userStates import UserStates
@@ -69,7 +69,7 @@ async def show_last_5(callback_query: CallbackQuery, state: FSMContext):
         
     await callback_query.message.answer(text="Список последних отвеченных отзывов:")    
     for i in range(feedbacks_to_show):
-        
+        await mark_shown_feedback(got_list_of_answered_fbs[i][5])
         if i != feedbacks_to_show - 1:
             await callback_query.message.answer(text="ОТЗЫВ\n\n"+
                                             f"Оценка: {got_list_of_answered_fbs[i][0]}\n"+
@@ -111,7 +111,7 @@ async def show_more(callback_query: CallbackQuery, state: FSMContext):
         
     await callback_query.message.answer(text="Список последних отвеченных отзывов:")    
     for i in range(feedbacks_to_show):
-        
+        await mark_shown_feedback(got_list_of_answered_fbs[i][5])
         if i != feedbacks_to_show - 1:
             await callback_query.message.answer(text="ОТЗЫВ\n\n"+
                                             f"Оценка: {got_list_of_answered_fbs[i][0]}\n"+

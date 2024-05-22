@@ -3,7 +3,7 @@ from api.gpt.gpt_api import generate_answer
 from app.database.shop_settings import get_rating
 from app.database.user_methods import get_users_with_balance
 from app.database.shop_methods import get_apis_list
-from app.database.answer_methods import fill_unanswered_feedback
+from app.database.answer_methods import delete_old_shown_feedback, fill_unanswered_feedback
 from api.wb.wb_feedbacks_ans import get_feedbacks
 
 
@@ -12,6 +12,8 @@ async def test_sched() -> None:
 
 
 async def scheduled_db_fill_job() -> bool:
+    
+    await delete_old_shown_feedback()
     
     users_with_balance = await get_users_with_balance()
     
