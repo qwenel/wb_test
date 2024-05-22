@@ -48,6 +48,7 @@ async def main_menu(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_text(text="Выберите один из пунктов главного меню:",
                                            reply_markup=main_menu_keyboard)
     await state.set_state(UserStates.menu)
+    await state.clear()
     await callback_query.answer()
 
 

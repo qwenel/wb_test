@@ -67,11 +67,6 @@ chosen_shop_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)]
 ])
 
-generated_answer_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text="Опубликовать ответ", callback_data=cb.publish)],
-    [InlineKeyboardButton(text="Редактировать", callback_data=cb.edit_generated)]
-])
-
 archive_menu_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Список последних 5", callback_data=cb.archive_last_5)],
     [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.answers)],
@@ -130,14 +125,29 @@ async def go_back_from_settings_errors_kb(shop_name : str) -> InlineKeyboardMark
     return builder.as_markup()
 
 
-async def unanswered_last(fb_id: str) -> InlineKeyboardMarkup:
+async def unanswered_last(fb_id: str, less_than_five: bool) -> InlineKeyboardMarkup:
 
     builder = InlineKeyboardBuilder()
     
     builder.button(text="Сгенерировать", callback_data=cb.generate+fb_id)
-    builder.button(text="Загрузить ещё 5", callback_data=cb.show_more)
+    
+    if not less_than_five:
+        builder.button(text="Загрузить ещё 5", callback_data=cb.show_more)
+        
     builder.button(text="Назад ↩️", callback_data=cb.answers)
     builder.button(text="Главное меню", callback_data=cb.main_menu)
+    
+    builder.adjust(1, True)
+    
+    return builder.as_markup()
+
+
+async def publish(fb_id: str) -> InlineKeyboardMarkup:
+
+    builder = InlineKeyboardBuilder()
+    
+    builder.button(text="Опубликовать ответ", callback_data=cb.publish+fb_id)
+    builder.button(text="Редактировать", callback_data=cb.edit_generated+fb_id)
     
     builder.adjust(1, True)
     

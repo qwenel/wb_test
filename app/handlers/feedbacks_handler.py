@@ -55,7 +55,7 @@ async def show_last_5(callback_query: CallbackQuery, state: FSMContext):
     
     got_list_of_answered_fbs = await get_not_null_answer_feedbacks_list(callback_query.from_user.id)
     
-    if got_list_of_answered_fbs is None:
+    if not got_list_of_answered_fbs:
         await callback_query.message.edit_text(text="увы нет отвеченных отзывов",
                                                reply_markup=go_to_main_menu_keyboard)
         return

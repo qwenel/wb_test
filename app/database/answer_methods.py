@@ -110,6 +110,42 @@ async def get_answer(telegram_id:int, shop_name:str, db=path) -> str | bool:
     return got_answer[0]
 
 
+async def get_answer_by_feedback_id(fb_id: str, db=path) -> str | bool:
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT fb_answer FROM feedbacks WHERE fb_id=?", (fb_id, ))
+    
+    got_answer = await cursor.fetchone()
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    if got_answer is None:
+        return False
+
+    return got_answer[0]
+
+
+async def get_api_key_by_feedback_id(fb_id: str, db=path) -> str | bool:
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+    
+    await cursor.execute("SELECT fk_api_key FROM feedbacks WHERE fb_id=?", (fb_id, ))
+    
+    got_api = await cursor.fetchone()
+    
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    
+    if got_api is None:
+        return False
+
+    return got_api[0]
+
+
 async def get_not_null_answer_feedbacks_list(telegram_id:int, db=path) -> list | bool:
     conn = await create_connection(db)
     cursor = await conn.cursor()
@@ -132,7 +168,10 @@ async def update_answer_text(fb_id:str, ans_text:str, db=path):
     conn = await create_connection(db)
     cursor = await conn.cursor()
     
-    await cursor.execute("UPDATE feedbacks SET fb_answer=? WHERE fb_id=?", (ans_text, fb_id))
+    if ans_text == "null":
+        await cursor.execute("UPDATE feedbacks SET fb_answer=null WHERE fb_id=?", (fb_id, ))
+    else:
+        await cursor.execute("UPDATE feedbacks SET fb_answer=? WHERE fb_id=?", (ans_text, fb_id))
     
     await cursor.close()
     await conn.commit()

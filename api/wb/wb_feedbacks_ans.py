@@ -30,18 +30,20 @@ async def answer_feedback(fb_id:str, ans_text:str, api_key:str) -> bool:
         'Authorization': api_key
     }
     
-    _params = {
+    data = {
         "id": fb_id,
-        "text":ans_text 
+        "text": ans_text 
     }
 
     async with aiohttp.ClientSession() as session:
-        async with session.patch(url, params=_params, headers=headers) as resp:
+        async with session.patch(url, json=data, headers=headers) as resp:
             if resp.status != 200:
-                print("Ошибка при отправке PATCH запроса.", resp.status)
+                res = await resp.json()
+                print("Ошибка при отправке PATCH запроса.", resp.status, "\n", res)                
                 return False
             
             res = await resp.json()
-            print(res)
+            print("200 PATCH: ", res)
             
             return True
+    
