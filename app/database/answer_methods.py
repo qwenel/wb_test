@@ -169,7 +169,8 @@ async def update_answer_text(fb_id:str, ans_text:str, db=path):
     cursor = await conn.cursor()
     
     if ans_text == "null":
-        await cursor.execute("UPDATE feedbacks SET fb_answer=null WHERE fb_id=?", (fb_id, ))
+        await cursor.execute("UPDATE feedbacks SET fb_answer=NULL WHERE fb_id=?", (fb_id, ))
+        print("поставил нул")
     else:
         await cursor.execute("UPDATE feedbacks SET fb_answer=? WHERE fb_id=?", (ans_text, fb_id))
     
@@ -182,7 +183,7 @@ async def mark_shown_feedback(fb_id: str, db=path):
     conn = await create_connection(db)
     cursor = await conn.cursor()
 
-    await cursor.execute("UPDATE feedbacks SET show_date=datetime('now', '+3 hours') WHERE fb_id=?", (fb_id, ))
+    await cursor.execute("UPDATE feedbacks SET show_date=datetime('now', '+3 hours') WHERE fb_id=? AND show_date=0", (fb_id, ))
     
     await cursor.close()
     await conn.commit()

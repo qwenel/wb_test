@@ -53,7 +53,14 @@ async def scheduled_db_fill_job() -> bool:
                 fb_product_wb = got_feedback['data']['feedbacks'][i]['productDetails']['productName']
                 fb_text = got_feedback['data']['feedbacks'][i]['text']
             
-                if not await fill_unanswered_feedback(fb_id, fb_rating, fb_shop_wb, fb_product_wb, fb_text, api_key):
+                if not await fill_unanswered_feedback(
+                    fb_id, 
+                    fb_rating, 
+                    fb_shop_wb, 
+                    fb_product_wb, 
+                    fb_text, 
+                    api_key
+                ):
                     print("пытаюсь пихнуть существующий в базе отзыв")
                     return False
                                 

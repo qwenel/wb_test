@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 from api.gpt.gpt_api import generate_answer
 from api.wb.wb_feedbacks_ans import answer_feedback
+from app.database.user_methods import undo_user_props_after_generating
 from app.keyboards.inlineKeyboards import (
     publish, unanswered_last, go_to_main_menu_keyboard
 )
@@ -223,10 +224,14 @@ async def publishing(callback_query:CallbackQuery, state:FSMContext):
         reply_markup=go_to_main_menu_keyboard)
     
     feedback_id = callback_query.data[7:]
-    print(feedback_id)
     answer = await get_answer_by_feedback_id(feedback_id)
-    print(answer)
     api_key = await get_api_key_by_feedback_id(feedback_id)
     
-    await answer_feedback(feedback_id, answer, api_key)
+    if not await answer_feedback(feedback_id, answer, api_key):
+        await undo_user_props_after_generating(callback_query.from_user.id)
+        await update_answer_text(feedback_id, "null")
+        await callback_query.message.answer(
+        text="Ошибка при публикации. . .\n\n" +
+            "Отзыв не опубликован!",
+        reply_markup=go_to_main_menu_keyboard)
     
