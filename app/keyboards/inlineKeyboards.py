@@ -216,6 +216,10 @@ async def publish(fb_id: str) -> InlineKeyboardMarkup:
 
     builder.button(text="Опубликовать ответ 🌐", callback_data=cb.publish + fb_id)
     builder.button(text="Редактировать ✍️", callback_data=cb.edit_generated + fb_id)
+    builder.button(
+        text="Отмена (плата за услугу не возвращается) ❌",
+        callback_data=cb.undo + fb_id,
+    )
 
     builder.adjust(1, True)
 

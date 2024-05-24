@@ -97,8 +97,9 @@ async def balance_menu(callback_query: CallbackQuery, state: FSMContext):
     balance = await get_balance(callback_query.from_user.id)
 
     await callback_query.message.edit_text(
-        text=f"Вам доступно {balance} токенов на отзывы и вопросы.",
+        text=f"Вам доступно <b>{balance}</b> токенов на отзывы и вопросы.",
         reply_markup=balance_menu_keyboard,
+        parse_mode="HTML",
     )
 
     await callback_query.answer()

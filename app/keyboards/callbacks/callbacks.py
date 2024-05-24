@@ -35,3 +35,4 @@ archive_last_5 = "arch_last_5"
 
 publish = "publish"
 edit_generated = "edit"
+undo = "no_publish"

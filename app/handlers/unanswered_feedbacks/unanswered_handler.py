@@ -9,7 +9,10 @@ from aiogram.fsm.context import FSMContext
 
 from api.gpt.gpt_api import generate_answer
 from api.wb.wb_feedbacks_ans import answer_feedback
-from app.database.user_methods import undo_user_props_after_generating
+from app.database.user_methods import (
+    publish_cancelling,
+    undo_user_props_after_generating,
+)
 from app.keyboards.inlineKeyboards import (
     publish,
     unanswered_last,
@@ -162,7 +165,7 @@ async def show_more(callback_query: CallbackQuery, state: FSMContext):
 async def generate(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
 
-    await state.update_data(fb_id=callback_query.data[4:])  # TODO: delete if not used
+    await state.update_data(fb_id=callback_query.data[4:])
 
     got_feedback = await get_feedback_to_generate_answer(callback_query.data[4:])
 
@@ -254,3 +257,19 @@ async def publishing(callback_query: CallbackQuery, state: FSMContext):
             text="Ошибка при публикации. . .\n\n" + "Отзыв не опубликован!",
             reply_markup=go_to_main_menu_keyboard,
         )
+
+
+@router_unanswered.callback_query(UserStates.unanswered, F.data[:10] == cb.undo)
+async def no_publish(callback_query: CallbackQuery):
+    await callback_query.answer()
+
+    await callback_query.message.answer(
+        text="Отменяю публикацию. . .",
+        reply_markup=go_to_main_menu_keyboard,
+    )
+
+    feedback_id = callback_query.data[10:]
+
+    await publish_cancelling(callback_query.from_user.id)
+
+    await update_answer_text(feedback_id, "null")
