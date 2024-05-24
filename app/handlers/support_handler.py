@@ -18,7 +18,7 @@ async def get_support(callback_query: CallbackQuery):
     await callback_query.answer()
 
     await callback_query.message.edit_text(
-        text="По вопросам обращайтесь в поддержку (тут будет ссылка)",
+        text="По вопросам обращайтесь в поддержку https://t.me/alekseevlife (@alekseevlife)",
         reply_markup=InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="Назад ↩️", callback_data=cb.support)],
