@@ -1,27 +1,56 @@
 from api.gpt.gpt_api import generate_answer
 from app.database.shop_settings import get_rating
-from app.database.user_methods import get_users_with_balance
+from app.database.user_methods import get_users, get_users_with_balance
 from app.database.shop_methods import get_apis_list
 from app.database.answer_methods import (
     delete_old_shown_feedback,
     fill_unanswered_feedback,
+    get_unanswered_fb_list,
 )
-from api.wb.wb_feedbacks_ans import get_feedbacks
+from api.wb.wb_feedbacks_ans import delete_if_answered_feedback, get_feedbacks
 
 
-async def test_sched() -> None:
-    print("Scheduler работает каждые 10 секунд")
-
-
-async def scheduled_db_fill_job() -> bool:
+async def clear_old_shown_feedbacks_job():
 
     await delete_old_shown_feedback()
+
+
+# Working with unanswered feedbacks in DB
+async def process_unanswered_job():
+
+    list_of_user_ids = await get_users()
+
+    for user_id in list_of_user_ids:
+        unanswered_feedbacks = await get_unanswered_fb_list(user_id)
+
+        if unanswered_feedbacks != False:
+            for unanswered_feedback in unanswered_feedbacks:
+
+                await delete_if_answered_feedback(
+                    unanswered_feedback[4], unanswered_feedback[5]
+                )
+
+                rating_filter = await get_rating(
+                    user_id, api_key=unanswered_feedback[5]
+                )
+
+                await auto_answer(
+                    user_id,
+                    unanswered_feedback[4],
+                    unanswered_feedback[0],
+                    unanswered_feedback[3],
+                    unanswered_feedback[5],
+                    rating_filter,
+                )
+
+
+async def db_fill_job():
 
     users_with_balance = await get_users_with_balance()
 
     if users_with_balance is None:
         print("все пользователи без баланса")
-        return None
+        return
 
     got_apis_for_user_id = {
         user_id: await get_apis_list(user_id) for user_id in users_with_balance
@@ -30,7 +59,7 @@ async def scheduled_db_fill_job() -> bool:
     for user_id in users_with_balance:
 
         if got_apis_for_user_id[user_id] is None:
-            print("по какой-то причине у пользователя нет магазинов")
+            print("у пользователя", user_id, "нет магазинов")
             continue
 
         # Working with shop's api_key
@@ -48,30 +77,32 @@ async def scheduled_db_fill_job() -> bool:
 
             # Working with loaded feedbacks from one API
             for i in range(got_feedback["data"]["countUnanswered"]):
+                await fill_unanswered_feedback(
+                    got_feedback["data"]["feedbacks"][i]["id"],
+                    got_feedback["data"]["feedbacks"][i]["productValuation"],
+                    got_feedback["data"]["feedbacks"][i]["productDetails"]["brandName"],
+                    got_feedback["data"]["feedbacks"][i]["productDetails"][
+                        "productName"
+                    ],
+                    got_feedback["data"]["feedbacks"][i]["text"],
+                    api_key,
+                )
 
-                fb_id = got_feedback["data"]["feedbacks"][i]["id"]
-                fb_rating = got_feedback["data"]["feedbacks"][i]["productValuation"]
-                fb_shop_wb = got_feedback["data"]["feedbacks"][i]["productDetails"][
-                    "brandName"
-                ]
-                fb_product_wb = got_feedback["data"]["feedbacks"][i]["productDetails"][
-                    "productName"
-                ]
-                fb_text = got_feedback["data"]["feedbacks"][i]["text"]
 
-                if not await fill_unanswered_feedback(
-                    fb_id, fb_rating, fb_shop_wb, fb_product_wb, fb_text, api_key
-                ):
-                    print("пытаюсь пихнуть существующий в базе отзыв")
-                    return False
+async def auto_answer(
+    tg_id: str,
+    fb_id: str,
+    fb_rating: int,
+    fb_text: str,
+    api_key: str,
+    rating_filter: str,
+):
 
-                if got_rating_from_api != "0" or got_rating_from_api == "gt0":
-                    await generate_answer(user_id, fb_id, fb_text, api_key, True)
-                elif got_rating_from_api == "gt2" and fb_rating >= 2:
-                    await generate_answer(user_id, fb_id, fb_text, api_key, True)
-                elif got_rating_from_api == "gt3" and fb_rating >= 3:
-                    await generate_answer(user_id, fb_id, fb_text, api_key, True)
-                elif got_rating_from_api == "gt4" and fb_rating >= 4:
-                    await generate_answer(user_id, fb_id, fb_text, api_key, True)
-
-    return True
+    if rating_filter == "gt0":
+        await generate_answer(tg_id, fb_id, fb_text, api_key, True)
+    elif rating_filter == "gt2" and fb_rating >= 2:
+        await generate_answer(tg_id, fb_id, fb_text, api_key, True)
+    elif rating_filter == "gt3" and fb_rating >= 3:
+        await generate_answer(tg_id, fb_id, fb_text, api_key, True)
+    elif rating_filter == "gt4" and fb_rating >= 4:
+        await generate_answer(tg_id, fb_id, fb_text, api_key, True)

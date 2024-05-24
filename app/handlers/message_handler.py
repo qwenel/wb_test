@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 
@@ -24,6 +24,13 @@ import app.keyboards.callbacks.callbacks as cb
 
 router_main = Router()
 router_main.include_routers(router_shop, router_answers, router_balance, router_support)
+
+
+@router_main.message(CommandStart())
+async def clear_markup(message: Message):
+    await message.answer(reply_markup=ReplyKeyboardRemove())
+
+    await start_msg(message, UserStates.menu)
 
 
 # Starting!!!

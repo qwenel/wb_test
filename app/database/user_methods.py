@@ -29,7 +29,7 @@ async def get_users(db=path) -> list | None:
     await conn.commit()
     await conn.close()
 
-    if got_users is None:
+    if len(got_users) == 0:
         return None
 
     list_of_users = [user[0] for user in got_users]

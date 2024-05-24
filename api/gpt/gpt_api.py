@@ -39,7 +39,7 @@ async def generate_answer(
                 return False
 
             await update_answer_text(fb_id, answer, db)
-
+            await update_user_props_after_generating(tg_id, db)
             return True
 
         await update_user_props_after_generating(tg_id, db)
