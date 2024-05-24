@@ -11,7 +11,7 @@
 bot.py
 
 # ignore __pycache__
-*/__pycache__
+*/__pycache__/
 
 # ignore db file! ! !
 db/*
