@@ -14,6 +14,8 @@ shop_list = "shop_list"
 answers = "answers"
 balance = "balance"
 support = "support"
+offerta = "offerta"
+get_support = "tech_support"
 
 balance_replenishment = "pay_money"
 
@@ -24,8 +26,8 @@ yes_auto = "auto_yes"
 no_auto = "auto_no"
 
 settings = "shop_"
-setting_rating="set_new_rate"
-setting_auto="set_new_auto"
+setting_rating = "set_new_rate"
+setting_auto = "set_new_auto"
 
 generate = "gen_"
 show_more = "show_more"
