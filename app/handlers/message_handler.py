@@ -26,13 +26,6 @@ router_main = Router()
 router_main.include_routers(router_shop, router_answers, router_balance, router_support)
 
 
-@router_main.message(CommandStart())
-async def clear_markup(message: Message):
-    await message.answer(reply_markup=ReplyKeyboardRemove())
-
-    await start_msg(message, UserStates.menu)
-
-
 # Starting!!!
 @router_main.message(CommandStart())
 async def start_msg(message: Message, state: FSMContext):
