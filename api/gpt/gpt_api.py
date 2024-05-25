@@ -1,4 +1,5 @@
 import os
+from loguru import logger
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from api.wb.wb_feedbacks_ans import answer_feedback
@@ -34,7 +35,14 @@ async def generate_answer(
         answer = chat_completion.choices[0].message.content
 
         if auto:
-            print("OpenAI ChatGPT сгенерировал ответ и отправил на публикацию")
+            logger.info(
+                "GPT generated auto answer: fb_id: "
+                + fb_id
+                + "\n | text: "
+                + fb_text
+                + " |\n api_key "
+                + api_key
+            )
             if not await answer_feedback(fb_id, answer, api_key):
                 return False
 
@@ -42,9 +50,26 @@ async def generate_answer(
             await update_user_props_after_generating(tg_id, db)
             return True
 
+        logger.info(
+            "GPT generated manual answer: fb_id: "
+            + fb_id
+            + "\n | text: "
+            + fb_text
+            + " |\n api_key "
+            + api_key
+        )
         await update_user_props_after_generating(tg_id, db)
         return answer
 
     except Exception as e:
-        print("Ошибка при генерации ответа на отзыв.")
+
+        logger.error(
+            e
+            + "GPT ERROR: "
+            + fb_id
+            + "\n | text: "
+            + fb_text
+            + " |\n api_key "
+            + api_key
+        )
         return False

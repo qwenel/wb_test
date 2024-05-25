@@ -1,8 +1,42 @@
 import asyncio
 import aiohttp
+from loguru import logger
 
 from api.wb.wb_init import url, params
 from app.database.answer_methods import delete_feedback
+
+
+def logging(response: dict, level: str, method="."):
+    if level == "ERROR":
+        logger.error(response)
+
+    elif level == "INFO":
+
+        if method == "get list":
+
+            logger.info("GET list query success:")
+            for i in range(response["data"]["countUnanswered"]):
+                logger.info(
+                    f'\n\t id: {response["data"]["feedbacks"][i]["id"]}\n'
+                    + f'\t rating: {response["data"]["feedbacks"][i]["productValuation"]}\n'
+                    + f'\t shop: {response["data"]["feedbacks"][i]["productDetails"]["brandName"]}\n'
+                    + f'\t product: {response["data"]["feedbacks"][i]["productDetails"]["productName"]}\n'
+                    + f'\t text: {response["data"]["feedbacks"][i]["text"]}'
+                )
+
+        elif method == "patch":
+            logger.info(f"\n{response}")
+
+        elif method == "get id":
+            logger.info(
+                "GET id query success: \n"
+                + f'\t id: {response["data"]["id"]}\n'
+                + f'\t rating: {response["data"]["productValuation"]}\n'
+                + f'\t shop: {response["data"]["productDetails"]["brandName"]}\n'
+                + f'\t product: {response["data"]["productDetails"]["productName"]}\n'
+                + f'\t text: {response["data"]["text"]}'
+                + f'\t date: {response["data"]["createdDate"]}'
+            )
 
 
 async def get_feedbacks(api_key: str) -> dict | None:
@@ -11,16 +45,18 @@ async def get_feedbacks(api_key: str) -> dict | None:
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url, params=params, headers=headers) as resp:
+            response = await resp.json()
+
             if resp.status != 200:
-                print("ОШИБКА ПРИ ЗАПРОСЕ!!!", resp.status)
+                logging(response, "ERROR")
                 return None
 
-            res = await resp.json()
-
-            if res["data"]["countUnanswered"] == 0:
+            if response["data"]["countUnanswered"] == 0:
                 return None
 
-            return res
+            logging(response, "INFO", "get list")
+
+            return response
 
 
 async def answer_feedback(fb_id: str, ans_text: str, api_key: str) -> bool:
@@ -31,18 +67,17 @@ async def answer_feedback(fb_id: str, ans_text: str, api_key: str) -> bool:
 
     async with aiohttp.ClientSession() as session:
         async with session.patch(url, json=data, headers=headers) as resp:
+            response = await resp.json()
+
             if resp.status != 200:
-                res = await resp.json()
-                print("Ошибка при отправке PATCH запроса.", resp.status, "\n", res)
+                logging(response, "ERROR")
                 return False
 
-            res = await resp.json()
-            print("200 PATCH: ", res)
-
+            logging(response, "INFO", "patch")
             return True
 
 
-async def delete_if_answered_feedback(fb_id: str, api_key: str):
+async def delete_if_answered_feedback(fb_id: str, api_key: str) -> bool:
 
     headers = {"Authorization": api_key}
 
@@ -52,11 +87,14 @@ async def delete_if_answered_feedback(fb_id: str, api_key: str):
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url, params=params, headers=headers) as resp:
+            response = await resp.json()
+
             if resp.status != 200:
-                print("ошибка при получении отзыва по ID", resp.status, resp.json())
-                return None
 
-            res = await resp.json()
+                logging(response, "ERROR")
+                return False
 
-            if res["data"]["answer"] is not None:
+            if response["data"]["answer"] is not None:
                 await delete_feedback(fb_id)
+                logging(response, "INFO", "get id")
+                return True

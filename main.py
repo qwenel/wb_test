@@ -2,6 +2,7 @@ import asyncio, os, signal
 from aiogram import Bot, Dispatcher
 from datetime import datetime, timedelta
 from apscheduler.triggers.interval import IntervalTrigger
+from loguru import logger
 
 from app.handlers.message_handler import router_main
 from api.scheduler.scheduler import (
@@ -14,18 +15,51 @@ from dotenv import load_dotenv
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+
 load_dotenv()
+
+
+path = "logs/running.log"
+
+
+db_fill_job_lock = asyncio.Lock()
+process_unanswered_job_lock = asyncio.Lock()
+clear_old_shown_feedbacks_job_lock = asyncio.Lock()
+
+
+async def db_fill_job_wrapper():
+    async with db_fill_job_lock:
+        await db_fill_job()
+
+
+async def process_unanswered_job_wrapper():
+    async with process_unanswered_job_lock:
+        await process_unanswered_job()
+
+
+async def clear_old_shown_feedbacks_job_wrapper():
+    async with clear_old_shown_feedbacks_job_lock:
+        await clear_old_shown_feedbacks_job()
 
 
 async def main():
     bot = Bot(token=os.getenv("TOKEN_BOT"))
     dp = Dispatcher()
+    logger.add(
+        path,
+        format="{time} {level} {message}",
+        rotation="100 KB",
+        compression="zip",
+    )
+
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
-    scheduler.add_job(db_fill_job, trigger="interval", seconds=10)
-    scheduler.add_job(clear_old_shown_feedbacks_job, trigger="interval", hours=1)
+    scheduler.add_job(db_fill_job_wrapper, trigger="interval", seconds=10)
     scheduler.add_job(
-        process_unanswered_job,
+        clear_old_shown_feedbacks_job_wrapper, trigger="interval", hours=1
+    )
+    scheduler.add_job(
+        process_unanswered_job_wrapper,
         trigger=IntervalTrigger(
             seconds=10, start_date=datetime.now() + timedelta(seconds=5)
         ),
@@ -40,23 +74,8 @@ async def main():
         scheduler.shutdown(wait=False)
 
 
-def handle_exit(loop):
-    tasks = asyncio.all_tasks(loop)
-    for task in tasks:
-        task.cancel()
-
-    loop.stop()
-    loop.close()
-
-
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, lambda: asyncio.create_task(handle_exit(loop)))
-
     try:
         asyncio.run(main())
-    except KeyboardInterrupt:
-        print("До следующей встречи!")
-        exit()
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("До следующей встречи!")

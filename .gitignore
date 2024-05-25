@@ -15,3 +15,5 @@ __pycache__/
 
 # ignore db file! ! !
 *.db
+
+logs/

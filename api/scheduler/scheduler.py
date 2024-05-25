@@ -1,3 +1,5 @@
+from loguru import logger
+
 from api.gpt.gpt_api import generate_answer
 from app.database.shop_settings import get_rating
 from app.database.user_methods import get_users, get_users_with_balance
@@ -43,8 +45,6 @@ async def process_unanswered_job():
                     rating_filter,
                 )
 
-        print(unanswered_feedbacks)
-
 
 async def db_fill_job():
 
@@ -75,7 +75,7 @@ async def db_fill_job():
             got_feedback = await get_feedbacks(api_key)
             if got_feedback is None:
                 continue
-            print(got_feedback)
+
             # Working with loaded feedbacks from one API
             for i in range(got_feedback["data"]["countUnanswered"]):
                 await fill_unanswered_feedback(
