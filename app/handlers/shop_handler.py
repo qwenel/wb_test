@@ -90,7 +90,7 @@ async def setting_api_key(message: Message, state: FSMContext):
         await delete_shop_if_null(message.from_user.id)
         await message.answer(
             text="Произошла внутренняя ошибка при вводе api_key\n\n"
-            + "Вероятная причина ошибки: API-ключи уже зарегестрирован\n"
+            + "Вероятная причина ошибки: API-ключ уже зарегестрирован\n"
             + "Извините за предоставленные неудобства, повторите позднее...",
             reply_markup=in_kb.go_to_main_menu_keyboard,
         )
