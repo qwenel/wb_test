@@ -1,4 +1,4 @@
-import asyncio, os
+import asyncio, os, signal
 from aiogram import Bot, Dispatcher
 from datetime import datetime, timedelta
 from apscheduler.triggers.interval import IntervalTrigger
@@ -40,7 +40,21 @@ async def main():
         scheduler.shutdown(wait=False)
 
 
+def handle_exit(loop):
+    tasks = asyncio.all_tasks(loop)
+    for task in tasks:
+        task.cancel()
+
+    loop.stop()
+    loop.close()
+
+
 if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, lambda: asyncio.create_task(handle_exit(loop)))
+
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

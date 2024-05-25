@@ -43,6 +43,8 @@ async def process_unanswered_job():
                     rating_filter,
                 )
 
+        print(unanswered_feedbacks)
+
 
 async def db_fill_job():
 
@@ -59,7 +61,6 @@ async def db_fill_job():
     for user_id in users_with_balance:
 
         if got_apis_for_user_id[user_id] is None:
-            print("у пользователя", user_id, "нет магазинов")
             continue
 
         # Working with shop's api_key
@@ -74,7 +75,7 @@ async def db_fill_job():
             got_feedback = await get_feedbacks(api_key)
             if got_feedback is None:
                 continue
-
+            print(got_feedback)
             # Working with loaded feedbacks from one API
             for i in range(got_feedback["data"]["countUnanswered"]):
                 await fill_unanswered_feedback(

@@ -18,7 +18,6 @@ async def get_feedbacks(api_key: str) -> dict | None:
             res = await resp.json()
 
             if res["data"]["countUnanswered"] == 0:
-                print("У пользователя нет отзывов")
                 return None
 
             return res
@@ -44,9 +43,6 @@ async def answer_feedback(fb_id: str, ans_text: str, api_key: str) -> bool:
 
 
 async def delete_if_answered_feedback(fb_id: str, api_key: str):
-
-    print(fb_id)
-    print(api_key)
 
     headers = {"Authorization": api_key}
 
