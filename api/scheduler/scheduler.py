@@ -70,7 +70,7 @@ async def db_fill_job():
         for user_id in users_with_balance:
 
             if got_apis_for_user_id[user_id] is None:
-                logger.info(f"user {user_id} don't have any API-keys...")
+                #logger.info(f"user {user_id} don't have any API-keys...")
                 continue
 
             # Working with shop's api_key
