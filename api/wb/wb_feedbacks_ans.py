@@ -27,7 +27,7 @@ async def get_feedbacks(api_key: str) -> dict | None:
         delay = 1
         for attempt in range(5):
             try:
-                
+
                 async with session.get(url, params=params, headers=headers) as resp:
                     response = await resp.json()
 
@@ -132,6 +132,8 @@ async def delete_if_answered_feedback(fb_id: str, api_key: str) -> bool:
                         if response["data"]["answer"] is not None:
                             await delete_feedback(fb_id)
                             return True
+                        else:
+                            return False
                     elif resp.status == 503:
                         logger.warning(
                             f"GET id: couldn't answer feedback: {response}\nattempt: {attempt}"
