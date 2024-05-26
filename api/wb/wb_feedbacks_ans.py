@@ -6,13 +6,20 @@ from api.wb.wb_init import url, params
 from app.database.answer_methods import delete_feedback
 
 
-def logging(response: dict, level: str, method="."):
-    if level == "ERROR":
-        logger.error(response)
+async def get_feedbacks(api_key: str) -> dict | None:
 
-    elif level == "INFO":
+    headers = {"Authorization": api_key}
 
-        if method == "get list":
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params, headers=headers) as resp:
+            response = await resp.json()
+
+            if resp.status != 200:
+                logger.error(f"GET list error: {response}")
+                return None
+
+            if response["data"]["countUnanswered"] == 0:
+                return None
 
             logger.info("GET list query success:")
             for i in range(response["data"]["countUnanswered"]):
@@ -23,38 +30,6 @@ def logging(response: dict, level: str, method="."):
                     + f'\t product: {response["data"]["feedbacks"][i]["productDetails"]["productName"]}\n'
                     + f'\t text: {response["data"]["feedbacks"][i]["text"]}'
                 )
-
-        elif method == "patch":
-            logger.info(f"\n{response}")
-
-        elif method == "get id":
-            logger.info(
-                "GET id query success: \n"
-                + f'\t id: {response["data"]["id"]}\n'
-                + f'\t rating: {response["data"]["productValuation"]}\n'
-                + f'\t shop: {response["data"]["productDetails"]["brandName"]}\n'
-                + f'\t product: {response["data"]["productDetails"]["productName"]}\n'
-                + f'\t text: {response["data"]["text"]}'
-                + f'\t date: {response["data"]["createdDate"]}'
-            )
-
-
-async def get_feedbacks(api_key: str) -> dict | None:
-
-    headers = {"Authorization": api_key}
-
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, params=params, headers=headers) as resp:
-            response = await resp.json()
-
-            if resp.status != 200:
-                logging(response, "ERROR")
-                return None
-
-            if response["data"]["countUnanswered"] == 0:
-                return None
-
-            logging(response, "INFO", "get list")
 
             return response
 
@@ -70,10 +45,10 @@ async def answer_feedback(fb_id: str, ans_text: str, api_key: str) -> bool:
             response = await resp.json()
 
             if resp.status != 200:
-                logging(response, "ERROR")
+                logger.error(f"PATCH error: couldn't answer feedback: {response}")
                 return False
 
-            logging(response, "INFO", "patch")
+            logger.info(f"successfully send PATCH query: {response}")
             return True
 
 
@@ -90,11 +65,18 @@ async def delete_if_answered_feedback(fb_id: str, api_key: str) -> bool:
             response = await resp.json()
 
             if resp.status != 200:
-
-                logging(response, "ERROR")
+                logger.error(f"GET id error: {response}")
                 return False
 
             if response["data"]["answer"] is not None:
                 await delete_feedback(fb_id)
-                logging(response, "INFO", "get id")
+                logger.info(
+                    "GET id query success: \n"
+                    + f'\t id: {response["data"]["id"]}\n'
+                    + f'\t rating: {response["data"]["productValuation"]}\n'
+                    + f'\t shop: {response["data"]["productDetails"]["brandName"]}\n'
+                    + f'\t product: {response["data"]["productDetails"]["productName"]}\n'
+                    + f'\t text: {response["data"]["text"]}'
+                    + f'\t date: {response["data"]["createdDate"]}'
+                )
                 return True

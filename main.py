@@ -22,26 +22,6 @@ load_dotenv()
 path = "logs/running.log"
 
 
-db_fill_job_lock = asyncio.Lock()
-process_unanswered_job_lock = asyncio.Lock()
-clear_old_shown_feedbacks_job_lock = asyncio.Lock()
-
-
-async def db_fill_job_wrapper():
-    async with db_fill_job_lock:
-        await db_fill_job()
-
-
-async def process_unanswered_job_wrapper():
-    async with process_unanswered_job_lock:
-        await process_unanswered_job()
-
-
-async def clear_old_shown_feedbacks_job_wrapper():
-    async with clear_old_shown_feedbacks_job_lock:
-        await clear_old_shown_feedbacks_job()
-
-
 async def main():
     bot = Bot(token=os.getenv("TOKEN_BOT"))
     dp = Dispatcher()
@@ -54,12 +34,10 @@ async def main():
 
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
-    scheduler.add_job(db_fill_job_wrapper, trigger="interval", seconds=10)
+    scheduler.add_job(db_fill_job, trigger="interval", seconds=10)
+    scheduler.add_job(clear_old_shown_feedbacks_job, trigger="interval", hours=1)
     scheduler.add_job(
-        clear_old_shown_feedbacks_job_wrapper, trigger="interval", hours=1
-    )
-    scheduler.add_job(
-        process_unanswered_job_wrapper,
+        process_unanswered_job,
         trigger=IntervalTrigger(
             seconds=10, start_date=datetime.now() + timedelta(seconds=5)
         ),
@@ -77,5 +55,5 @@ async def main():
 if __name__ == "__main__":
     try:
         asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
+    except (KeyboardInterrupt, asyncio.exceptions.CancelledError, SystemExit):
         logger.info("До следующей встречи!")
