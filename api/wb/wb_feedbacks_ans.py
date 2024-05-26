@@ -27,7 +27,7 @@ async def get_feedbacks(api_key: str) -> dict | None:
         delay = 1
         for attempt in range(5):
             try:
-                logger.info(f"Sending request: GET {url}/n{params}/n{headers}")
+                
                 async with session.get(url, params=params, headers=headers) as resp:
                     response = await resp.json()
 
