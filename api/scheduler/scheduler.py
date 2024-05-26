@@ -84,7 +84,6 @@ async def db_fill_job():
                         f"couldn't get Rating from user {user_id} with API: {api_key}"
                     )
 
-                await asyncio.sleep(0.7)
                 got_feedback = await get_feedbacks(api_key)
 
                 if got_feedback is None:
