@@ -148,6 +148,23 @@ archive_menu_on_last_keyboard = InlineKeyboardMarkup(
 )
 
 
+async def balance_replenish_by_card_keyboard(
+    link_test: str, link100: str, link500: str, link1000: str
+) -> InlineKeyboardMarkup:
+
+    builder = InlineKeyboardBuilder()
+    builder.button(text="1,00₽ - 1 Токен ТЕСТ)", url=link_test)
+    builder.button(text="499,00₽ - 100 Ответов (1 токен = 4,99₽)", url=link100)
+    builder.button(text="1390,00₽ - 500 Ответов (1 токен = 2,78₽)", url=link500)
+    builder.button(text="2490,00₽ - 1000 Ответов (1 токен = 2,49₽)", url=link1000)
+    builder.button(text="Назад ↩️", callback_data=cb.archive_fb)
+    builder.button(text="Главное меню 🏠", callback_data=cb.main_menu)
+
+    builder.adjust(1, True)
+
+    return builder.as_markup()
+
+
 async def archive_menu_on_last_keyboard(less_than_five: bool) -> InlineKeyboardMarkup:
 
     builder = InlineKeyboardBuilder()

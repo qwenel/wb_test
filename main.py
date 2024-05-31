@@ -30,7 +30,7 @@ async def main():
         format="{time} {level} {message}",
         rotation="100 KB",
         compression="zip",
-        colorize=True
+        colorize=True,
     )
 
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
