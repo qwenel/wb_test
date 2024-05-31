@@ -1,60 +1,73 @@
-import asyncio, os, signal
-from aiogram import Bot, Dispatcher
+import asyncio, os
+import aiohttp
+import uvicorn
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
 from datetime import datetime, timedelta
 from apscheduler.triggers.interval import IntervalTrigger
 from loguru import logger
+from dotenv import load_dotenv
 
-from app.handlers.message_handler import router_main
 from api.scheduler.scheduler import (
     db_fill_job,
     process_unanswered_job,
     clear_old_shown_feedbacks_job,
 )
-
-from dotenv import load_dotenv
-
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from web.set_webhook import router_whook
 
 
 load_dotenv()
 
 
-path = "logs/running.log"
+TG_BOT_TOKEN = os.getenv("TOKEN_BOT")
+LOGGER_PATH = os.getenv("LOGGER_PATH")
+WEB_HOOK_ADDRS = os.getenv("WEB_HOOK_ADDRS")
+
+logger.add(
+    LOGGER_PATH,
+    format="{time} {level} {message}",
+    rotation="100 KB",
+    compression="zip",
+    colorize=True,
+)
 
 
-async def main():
-    bot = Bot(token=os.getenv("TOKEN_BOT"))
-    dp = Dispatcher()
-    logger.add(
-        path,
-        format="{time} {level} {message}",
-        rotation="100 KB",
-        compression="zip",
-        colorize=True,
-    )
+@asynccontextmanager
+async def lifespan(app: FastAPI):
 
-    scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"https://api.telegram.org/bot{TG_BOT_TOKEN}/setWebhook?url=https://{WEB_HOOK_ADDRS}"
+        ) as resp:
+            logger.info(resp.text)
 
-    scheduler.add_job(db_fill_job, trigger="interval", seconds=10)
-    scheduler.add_job(clear_old_shown_feedbacks_job, trigger="interval", hours=1)
-    scheduler.add_job(
-        process_unanswered_job,
-        trigger=IntervalTrigger(
-            seconds=10, start_date=datetime.now() + timedelta(seconds=5)
-        ),
-    )
-    dp.include_router(router_main)
+            if resp.status != 200:
+                exit()
 
-    scheduler.start()
+            scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
-    try:
-        await dp.start_polling(bot)
-    finally:
-        scheduler.shutdown(wait=False)
+            scheduler.add_job(db_fill_job, trigger="interval", seconds=10)
+            scheduler.add_job(
+                clear_old_shown_feedbacks_job, trigger="interval", hours=1
+            )
+            scheduler.add_job(
+                process_unanswered_job,
+                trigger=IntervalTrigger(
+                    seconds=10, start_date=datetime.now() + timedelta(seconds=5)
+                ),
+            )
+
+            scheduler.start()
+
+            yield
+
+            scheduler.shutdown(wait=False)
+
+
+app = FastAPI(lifespan=lifespan)
+app.include_router(router_whook)
 
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except (KeyboardInterrupt, asyncio.exceptions.CancelledError, SystemExit):
-        logger.info("До следующей встречи!")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
