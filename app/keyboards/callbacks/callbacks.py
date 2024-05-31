@@ -18,6 +18,7 @@ offerta = "offerta"
 get_support = "tech_support"
 
 balance_replenishment = "pay_money"
+link_pressed = "link_pressed"
 
 unanswered = "unanswered"
 archive_fb = "archive_fb"

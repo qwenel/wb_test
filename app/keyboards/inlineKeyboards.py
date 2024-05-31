@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 import app.keyboards.callbacks.callbacks as cb
 import app.database.shop_methods as db_shop
@@ -148,15 +148,53 @@ archive_menu_on_last_keyboard = InlineKeyboardMarkup(
 )
 
 
-async def balance_replenish_by_card_keyboard(
-    link_test: str, link100: str, link500: str, link1000: str
-) -> InlineKeyboardMarkup:
+async def balance_replenish_web_app_keyboard(
+    link1: str, link100: str, link500: str, link1000: str) -> InlineKeyboardMarkup:
 
     builder = InlineKeyboardBuilder()
-    builder.button(text="1,00₽ - 1 Токен ТЕСТ)", url=link_test)
-    builder.button(text="499,00₽ - 100 Ответов (1 токен = 4,99₽)", url=link100)
-    builder.button(text="1390,00₽ - 500 Ответов (1 токен = 2,78₽)", url=link500)
-    builder.button(text="2490,00₽ - 1000 Ответов (1 токен = 2,49₽)", url=link1000)
+    builder.button(
+        text="1 Токен - 1,00₽ - TEST",
+        web_app=WebAppInfo(url=link1)
+    )
+    builder.button(
+        text="100 Ответов - 499,00₽ - (1 токен = 4,99₽)",
+        web_app=WebAppInfo(url=link100)
+    )
+    builder.button(
+        text="500 Ответов - 1390,00₽ - (1 токен = 2,78₽)",
+        web_app=WebAppInfo(url=link500)
+    )
+    builder.button(
+        text="1000 Ответов - 2490,00₽ - (1 токен = 2,49₽)",
+        web_app=WebAppInfo(url=link1000)
+    )
+    builder.button(text="Назад ↩️", callback_data=cb.archive_fb)
+    builder.button(text="Главное меню 🏠", callback_data=cb.main_menu)
+
+    builder.adjust(1, True)
+
+    return builder.as_markup()
+
+
+async def balance_replenish_by_card_keyboard() -> InlineKeyboardMarkup:
+
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="1 Токен - 1,00₽ - TEST",
+        callback_data=cb.link_pressed + "1",
+    )
+    builder.button(
+        text="100 Ответов - 499,00₽ - (1 токен = 4,99₽)",
+        callback_data=cb.link_pressed + "100",
+    )
+    builder.button(
+        text="500 Ответов - 1390,00₽ - (1 токен = 2,78₽)",
+        callback_data=cb.link_pressed + "500",
+    )
+    builder.button(
+        text="1000 Ответов - 2490,00₽ - (1 токен = 2,49₽)",
+        callback_data=cb.link_pressed + "1000",
+    )
     builder.button(text="Назад ↩️", callback_data=cb.archive_fb)
     builder.button(text="Главное меню 🏠", callback_data=cb.main_menu)
 
