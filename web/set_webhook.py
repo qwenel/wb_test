@@ -20,9 +20,17 @@ dp = Dispatcher()
 dp.include_router(router_main)
 
 
+async def set_webhook():
+    await bot.delete_webhook(True)
+
+    webhook_uri = os.getenv("WEB_HOOK_ADDRS") + TG_BOT_TOKEN
+    print(webhook_uri, os.getenv("WEB_HOOK_ADDRS"))
+    await bot.set_webhook(webhook_uri)
+
+
 @router_whook.post("/tg_updates")
 async def process_webhook(request: Request):
-
+    print(await request.json())
     if TG_BOT_TOKEN == TG_BOT_TOKEN:
         update = Update(**await request.json())
         await dp.feed_update(bot, update)

@@ -14,7 +14,7 @@ from api.scheduler.scheduler import (
     clear_old_shown_feedbacks_job,
 )
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from web.set_webhook import router_whook
+from web.set_webhook import router_whook, set_webhook
 
 
 load_dotenv()
@@ -36,33 +36,24 @@ logger.add(
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-            f"https://api.telegram.org/bot{TG_BOT_TOKEN}/setWebhook?url=https://{WEB_HOOK_ADDRS}"
-        ) as resp:
-            logger.info(resp.text)
+    await set_webhook()
+    logger.info("STARTING...")
+    scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
-            if resp.status != 200:
-                exit()
+    scheduler.add_job(db_fill_job, trigger="interval", seconds=10)
+    scheduler.add_job(clear_old_shown_feedbacks_job, trigger="interval", hours=1)
+    scheduler.add_job(
+        process_unanswered_job,
+        trigger=IntervalTrigger(
+            seconds=10, start_date=datetime.now() + timedelta(seconds=5)
+        ),
+    )
 
-            scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
+    scheduler.start()
 
-            scheduler.add_job(db_fill_job, trigger="interval", seconds=10)
-            scheduler.add_job(
-                clear_old_shown_feedbacks_job, trigger="interval", hours=1
-            )
-            scheduler.add_job(
-                process_unanswered_job,
-                trigger=IntervalTrigger(
-                    seconds=10, start_date=datetime.now() + timedelta(seconds=5)
-                ),
-            )
+    yield
 
-            scheduler.start()
-
-            yield
-
-            scheduler.shutdown(wait=False)
+    scheduler.shutdown(wait=False)
 
 
 app = FastAPI(lifespan=lifespan)
