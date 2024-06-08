@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
 from api.robocassa.robocassa import create_pay_link
+from app.database.user_methods import inc_balance
 import app.keyboards.callbacks.callbacks as cb
 from ..keyboards.inlineKeyboards import (
     after_payment_keyboard,
@@ -67,6 +68,8 @@ async def payment_status_success(
         1390: 500,
         2490: 1000,
     }
+
+    await inc_balance(user_id, tokens[out_sum])
 
     await bot.send_message(
         user_id,

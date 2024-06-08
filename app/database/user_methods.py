@@ -162,3 +162,21 @@ async def publish_cancelling(telegram_id: int, db=path) -> bool:
     await conn.close()
 
     return True
+
+
+async def inc_balance(telegram_id: int, amount: int, db=path) -> bool:
+    if await get_user(telegram_id, db) == -1:
+        return False
+
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+
+    await cursor.execute(
+        "UPDATE users SET balance=balance+? WHERE tg_id=?", (amount, telegram_id)
+    )
+
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+
+    return True
