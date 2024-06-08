@@ -1,16 +1,23 @@
 import asyncio
-from aiogram import F, Router
+from aiogram import F, Bot, Router
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
 from api.robocassa.robocassa import create_pay_link
 import app.keyboards.callbacks.callbacks as cb
 from ..keyboards.inlineKeyboards import (
-    balance_replenish_by_card_keyboard,
+    after_payment_keyboard,
     balance_replenish_web_app_keyboard,
     go_to_main_menu_keyboard,
 )
 from ..states.userStates import UserStates
+
+
+tokens = {
+    499: 100,
+    1390: 500,
+    2490: 1000,
+}
 
 
 router_balance = Router()
@@ -21,10 +28,10 @@ router_balance = Router()
 async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.balance_replenishment)
 
-    link1 = create_pay_link(1, "тестовая покупка")
-    link100 = create_pay_link(499, "покупка+100+токенов")
-    link500 = create_pay_link(1390, "покупка+500+токенов")
-    link1000 = create_pay_link(2490, "покупка+1000+токенов")
+    link1 = create_pay_link(1, callback_query.from_user, "тестовая покупка")
+    link100 = create_pay_link(499, callback_query.from_user, "покупка+100+токенов")
+    link500 = create_pay_link(1390, callback_query.from_user, "покупка+500+токенов")
+    link1000 = create_pay_link(2490, callback_query.from_user, "покупка+1000+токенов")
 
     await callback_query.message.edit_text(
         text="Выбери сумму пополнения",
@@ -34,6 +41,54 @@ async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext
     )
 
     await callback_query.answer()
+
+
+async def payment_status_success(
+    bot: Bot, user_id: int, out_sum: int, state: FSMContext
+):
+    await state.set_state(UserStates.menu)
+
+    await bot.send_message(
+        user_id,
+        text=f"Отлично! Покупка на сумму <b>{out_sum} RUB</b> прошла успешно!"
+        + f"\n\nВаш баланс пополнен на <b>{tokens[out_sum]} токенов</b>!",
+        parse_mode="HTML",
+        reply_markup=after_payment_keyboard,
+    )
+
+
+async def payment_status_success(
+    bot: Bot, user_id: int, out_sum: int, state: FSMContext
+):
+    await state.set_state(UserStates.menu)
+
+    tokens = {
+        499: 100,
+        1390: 500,
+        2490: 1000,
+    }
+
+    await bot.send_message(
+        user_id,
+        text=f"Отлично! Покупка на сумму <b>{out_sum} RUB</b> прошла успешно!"
+        + f"\n\nВаш баланс пополнен на <b>{tokens[out_sum]} токенов</b>!",
+        parse_mode="HTML",
+        reply_markup=after_payment_keyboard,
+    )
+
+
+async def payment_status_failure(
+    bot: Bot, user_id: int, out_sum: int, state: FSMContext
+):
+    await state.set_state(UserStates.menu)
+
+    await bot.send_message(
+        user_id,
+        text=f"Произошла ошибка! Покупка на сумму <b>{out_sum} RUB</b> не осуществлена!"
+        + f"\n\nПопробуйте ещё раз...",
+        parse_mode="HTML",
+        reply_markup=after_payment_keyboard,
+    )
 
 
 # @router_balance.message(content_type=['web_app_data'])

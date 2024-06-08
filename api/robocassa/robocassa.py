@@ -13,20 +13,15 @@ shop_pwd_1 = os.getenv("SHOP_PWD1_TEST")
 shop_pwd_2 = os.getenv("SHOP_PWD2_TEST")
 
 
-inv_id = 1
-
-
-def create_pay_link(out_sum: int, desc: str) -> str:
-    global inv_id
+def create_pay_link(out_sum: int, invId: int, desc: str) -> str:
     url = generate_payment_link(
         merchant_login=shop_id,
         merchant_password_1=shop_pwd_1,
         cost=out_sum / 1.0,
-        number=inv_id,
+        number=invId,
         description=desc,
         is_test=1,
     )
-    inv_id += 1
     return url
 
 

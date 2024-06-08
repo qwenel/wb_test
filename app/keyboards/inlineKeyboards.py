@@ -148,25 +148,31 @@ archive_menu_on_last_keyboard = InlineKeyboardMarkup(
 )
 
 
+after_payment_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Баланс 💰", callback_data=cb.balance)],
+        [InlineKeyboardButton(text="Главное меню 🏠", callback_data=cb.main_menu)],
+    ]
+)
+
+
 async def balance_replenish_web_app_keyboard(
-    link1: str, link100: str, link500: str, link1000: str) -> InlineKeyboardMarkup:
+    link1: str, link100: str, link500: str, link1000: str
+) -> InlineKeyboardMarkup:
 
     builder = InlineKeyboardBuilder()
-    builder.button(
-        text="1 Токен - 1,00₽ - TEST",
-        web_app=WebAppInfo(url=link1)
-    )
+    builder.button(text="1 Токен - 1,00₽ - TEST", web_app=WebAppInfo(url=link1))
     builder.button(
         text="100 Ответов - 499,00₽ - (1 токен = 4,99₽)",
-        web_app=WebAppInfo(url=link100)
+        web_app=WebAppInfo(url=link100),
     )
     builder.button(
         text="500 Ответов - 1390,00₽ - (1 токен = 2,78₽)",
-        web_app=WebAppInfo(url=link500)
+        web_app=WebAppInfo(url=link500),
     )
     builder.button(
         text="1000 Ответов - 2490,00₽ - (1 токен = 2,49₽)",
-        web_app=WebAppInfo(url=link1000)
+        web_app=WebAppInfo(url=link1000),
     )
     builder.button(text="Назад ↩️", callback_data=cb.archive_fb)
     builder.button(text="Главное меню 🏠", callback_data=cb.main_menu)
