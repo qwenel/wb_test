@@ -1,5 +1,4 @@
-import asyncio, os
-import aiohttp
+import os
 import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -20,10 +19,7 @@ from web.set_webhook import router_whook, set_webhook
 load_dotenv()
 
 
-TG_BOT_TOKEN = os.getenv("TOKEN_BOT")
 LOGGER_PATH = os.getenv("LOGGER_PATH")
-WEB_HOOK_ADDRS = os.getenv("WEB_HOOK_ADDRS")
-
 logger.add(
     LOGGER_PATH,
     format="{time} {level} {message}",
