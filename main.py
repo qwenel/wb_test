@@ -14,7 +14,7 @@ from api.scheduler.scheduler import (
 )
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from web.set_webhook import router_whook, set_webhook
-
+from web.kassa_reqs import router_kassa
 
 load_dotenv()
 
@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(router_whook)
+app.include_routers(router_whook, router_kassa)
 
 
 if __name__ == "__main__":
