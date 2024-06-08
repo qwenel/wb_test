@@ -29,6 +29,9 @@ async def process_unanswered_job():
     async with process_unanswered_job_lock:
         list_of_user_ids = await get_users()
 
+        if list_of_user_ids is None:
+            return
+
         for user_id in list_of_user_ids:
             unanswered_feedbacks = await get_unanswered_fb_list(user_id)
 
