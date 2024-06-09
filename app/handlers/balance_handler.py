@@ -7,10 +7,10 @@ from api.robocassa.robocassa import create_pay_link
 from app.database.user_methods import inc_balance
 import app.keyboards.callbacks.callbacks as cb
 from ..keyboards.inlineKeyboards import (
-    after_payment_keyboard,
     balance_replenish_web_app_keyboard,
-    go_to_main_menu_keyboard,
+    after_payment_keyboard,
 )
+from main import logger
 from ..states.userStates import UserStates
 
 
@@ -28,8 +28,10 @@ router_balance = Router()
 @router_balance.callback_query(F.data == cb.balance_replenishment)
 async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.balance_replenishment)
-
-    link1 = create_pay_link(1, callback_query.from_user.id, "тестовая покупка")
+    logger.info(
+        f"user.id: {callback_query.from_user.id}\nfrom_user: {callback_query.from_user}"
+    )
+    link1 = create_pay_link(1, callback_query.from_user.id, "тестовая+покупка")
     link100 = create_pay_link(499, callback_query.from_user.id, "покупка+100+токенов")
     link500 = create_pay_link(1390, callback_query.from_user.id, "покупка+500+токенов")
     link1000 = create_pay_link(

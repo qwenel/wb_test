@@ -9,8 +9,9 @@ load_dotenv()
 
 
 shop_id = os.getenv("SHOP_ID")
-shop_pwd_1 = os.getenv("SHOP_PWD1_TEST")
-shop_pwd_2 = os.getenv("SHOP_PWD2_TEST")
+shop_pwd_1 = os.getenv("SHOP_PWD1")
+shop_pwd_2 = os.getenv("SHOP_PWD2")
+test = 0
 
 
 def create_pay_link(out_sum: int, invId: int, desc: str) -> str:
@@ -20,7 +21,7 @@ def create_pay_link(out_sum: int, invId: int, desc: str) -> str:
         cost=out_sum / 1.0,
         number=invId,
         description=desc,
-        is_test=1,
+        is_test=test,
     )
     return url
 
