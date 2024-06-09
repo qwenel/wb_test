@@ -29,10 +29,12 @@ router_balance = Router()
 async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.balance_replenishment)
 
-    link1 = create_pay_link(1, callback_query.from_user, "тестовая покупка")
-    link100 = create_pay_link(499, callback_query.from_user, "покупка+100+токенов")
-    link500 = create_pay_link(1390, callback_query.from_user, "покупка+500+токенов")
-    link1000 = create_pay_link(2490, callback_query.from_user, "покупка+1000+токенов")
+    link1 = create_pay_link(1, callback_query.from_user.id, "тестовая покупка")
+    link100 = create_pay_link(499, callback_query.from_user.id, "покупка+100+токенов")
+    link500 = create_pay_link(1390, callback_query.from_user.id, "покупка+500+токенов")
+    link1000 = create_pay_link(
+        2490, callback_query.from_user.id, "покупка+1000+токенов"
+    )
 
     await callback_query.message.edit_text(
         text="Выбери сумму пополнения",
