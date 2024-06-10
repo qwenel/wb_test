@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import F, Bot, Router
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 
 from api.robocassa.robocassa import create_pay_link
@@ -8,6 +8,7 @@ from app.database.payments_method import get_last_payment_id, new_payment
 from app.database.user_methods import inc_balance
 import app.keyboards.callbacks.callbacks as cb
 from ..keyboards.inlineKeyboards import (
+    balance_replenish_by_card_keyboard,
     balance_replenish_web_app_keyboard,
     after_payment_keyboard,
 )
@@ -22,6 +23,12 @@ tokens = {
     2490: 1000,
 }
 
+cost = {
+    0: 1,
+    100: 499,
+    500: 1390,
+    1000: 2490,
+}
 
 router_balance = Router()
 
@@ -31,28 +38,52 @@ router_balance = Router()
 async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.balance_replenishment)
 
-    await new_payment(callback_query.from_user.id)
-    get_invId = await get_last_payment_id(callback_query.from_user.id)
+    # await new_payment(callback_query.from_user.id)
+    # get_invId = await get_last_payment_id(callback_query.from_user.id)
 
-    logger.info(f"invID: {get_invId}, user_id: {callback_query.from_user.id}")
+    # logger.info(f"invID: {get_invId}, user_id: {callback_query.from_user.id}")
 
-    if get_invId is None:
-        await callback_query.message.edit_text(
-            text="Упс... Произошла непредвиденная ошибка.\n\n"
-            + "Простите за предоставленные неудобства, пожалуйста, повторите попытку позднее 😔",
-            reply_markup=after_payment_keyboard,
-        )
-        return
+    # if get_invId is None:
+    #     await callback_query.message.edit_text(
+    #         text="Упс... Произошла непредвиденная ошибка.\n\n"
+    #         + "Простите за предоставленные неудобства, пожалуйста, повторите попытку позднее 😔",
+    #         reply_markup=after_payment_keyboard,
+    #     )
+    #     return
 
-    link1 = create_pay_link(1, get_invId, "тестовая+покупка")
-    link100 = create_pay_link(499, get_invId, "покупка+100+токенов")
-    link500 = create_pay_link(1390, get_invId, "покупка+500+токенов")
-    link1000 = create_pay_link(2490, get_invId, "покупка+1000+токенов")
+    # link1 = create_pay_link(1, get_invId, "тестовая+покупка")
+    # link100 = create_pay_link(499, get_invId, "покупка+100+токенов")
+    # link500 = create_pay_link(1390, get_invId, "покупка+500+токенов")
+    # link1000 = create_pay_link(2490, get_invId, "покупка+1000+токенов")
 
     await callback_query.message.edit_text(
         text="Выбери сумму пополнения",
-        reply_markup=await balance_replenish_web_app_keyboard(
-            link1, link100, link500, link1000
+        reply_markup=await balance_replenish_by_card_keyboard(),
+    )
+
+    await callback_query.answer()
+
+
+@router_balance.callback_query(
+    UserStates.balance_replenishment,
+    F.data[: len(cb.link_pressed)] == cb.link_pressed,
+)
+async def process_pressed_link(callback_query: CallbackQuery):
+    logger.info("button pressed")
+    tokens = callback_query.data[len(cb.link_pressed) :]
+    logger.info(f"{tokens} : text;     {int(tokens)} : int")
+    await new_payment(callback_query.from_user.id)
+    get_invId = await get_last_payment_id(callback_query.from_user.id)
+
+    link = create_pay_link(cost[int(tokens)], get_invId, f"Покупка+{tokens}+токенов")
+
+    await callback_query.message.edit_text(
+        text="Оплатите по ссылке ниже",
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Оплатить", url=link)],
+                [InlineKeyboardButton(text="Главное меню", callback_data=cb.main_menu)],
+            ]
         ),
     )
 
@@ -82,30 +113,3 @@ async def payment_status_failure(bot: Bot, user_id: int, out_sum: int):
         parse_mode="HTML",
         reply_markup=after_payment_keyboard,
     )
-
-
-# @router_balance.message(content_type=['web_app_data'])
-# async def getRequest(request: Message):
-
-
-# @router_balance.callback_query(
-#     UserStates.balance_replenishment, F.data == cb.link_pressed
-# )
-# async def process_pressed_link(callback_query: CallbackQuery, state: FSMContext):
-
-#     tokens = callback_query.data[len(cb.link_pressed) :]
-
-#     out_sum = {"1": 1, "100": 499, "500": 1390, "1000": 2490}
-
-#     link = create_pay_link(out_sum[tokens], f"Покупка+{tokens}+токенов")
-
-#     await callback_query.message.edit_text(text=f"Ваша ссылка на оплату:\n\n{link}")
-
-#     await callback_query.answer()
-
-#     asyncio.sleep(2)
-
-#     await callback_query.message.edit_text(
-#         text=f"Оплата прошла успешно!\n\nБаланс пополнен на {callback_query.data[len(cb.link_pressed):]}",
-#         reply_markup=go_to_main_menu_keyboard,
-#     )

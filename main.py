@@ -16,7 +16,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from web.set_webhook import router_whook, set_webhook
 from web.kassa_reqs import router_kassa
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 LOGGER_PATH = os.getenv("LOGGER_PATH")

@@ -161,17 +161,17 @@ async def balance_replenish_web_app_keyboard(
 ) -> InlineKeyboardMarkup:
 
     builder = InlineKeyboardBuilder()
-    builder.button(text="1 Токен - 1,00₽ - TEST", web_app=WebAppInfo(url=link1))
+    builder.button(text="0 ответов - 1,00₽ - TEST", web_app=WebAppInfo(url=link1))
     builder.button(
-        text="100 Ответов - 499,00₽ - (1 токен = 4,99₽)",
+        text="100 ответов - 499,00₽ - (1 = 4,99₽)",
         web_app=WebAppInfo(url=link100),
     )
     builder.button(
-        text="500 Ответов - 1390,00₽ - (1 токен = 2,78₽)",
+        text="500 ответов - 1390,00₽ - (1 = 2,78₽)",
         web_app=WebAppInfo(url=link500),
     )
     builder.button(
-        text="1000 Ответов - 2490,00₽ - (1 токен = 2,49₽)",
+        text="1000 ответов - 2490,00₽ - (1 = 2,49₽)",
         web_app=WebAppInfo(url=link1000),
     )
     builder.button(text="Назад ↩️", callback_data=cb.balance)
@@ -186,22 +186,22 @@ async def balance_replenish_by_card_keyboard() -> InlineKeyboardMarkup:
 
     builder = InlineKeyboardBuilder()
     builder.button(
-        text="1 Токен - 1,00₽ - TEST",
-        callback_data=cb.link_pressed + "1",
+        text="0 ответов - 1,00₽ - TEST",
+        callback_data=cb.link_pressed + "0",
     )
     builder.button(
-        text="100 Ответов - 499,00₽ - (1 токен = 4,99₽)",
+        text="100 ответов - 499,00₽ - (1 = 4,99₽)",
         callback_data=cb.link_pressed + "100",
     )
     builder.button(
-        text="500 Ответов - 1390,00₽ - (1 токен = 2,78₽)",
+        text="500 ответов - 1390,00₽ - (1 = 2,78₽)",
         callback_data=cb.link_pressed + "500",
     )
     builder.button(
-        text="1000 Ответов - 2490,00₽ - (1 токен = 2,49₽)",
+        text="1000 ответов - 2490,00₽ - (1 = 2,49₽)",
         callback_data=cb.link_pressed + "1000",
     )
-    builder.button(text="Назад ↩️", callback_data=cb.archive_fb)
+    builder.button(text="Назад ↩️", callback_data=cb.balance)
     builder.button(text="Главное меню 🏠", callback_data=cb.main_menu)
 
     builder.adjust(1, True)
