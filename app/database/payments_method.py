@@ -28,3 +28,12 @@ async def get_payment_id(tg_id: int, db=path):
     if len(got_id) == 0:
         return None
     return got_id
+
+
+async def get_last_payment_id(tg_id: int, db=path):
+    got_id = await get_payment_id(tg_id)
+
+    if got_id is None:
+        return None
+
+    return got_id[-1][0]

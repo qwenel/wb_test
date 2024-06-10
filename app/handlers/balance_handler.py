@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
 from api.robocassa.robocassa import create_pay_link
+from app.database.payments_method import get_last_payment_id, new_payment
 from app.database.user_methods import inc_balance
 import app.keyboards.callbacks.callbacks as cb
 from ..keyboards.inlineKeyboards import (
@@ -28,15 +29,22 @@ router_balance = Router()
 @router_balance.callback_query(F.data == cb.balance_replenishment)
 async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.balance_replenishment)
-    logger.info(
-        f"user.id: {callback_query.from_user.id}\nfrom_user: {callback_query.from_user}"
-    )
-    link1 = create_pay_link(1, callback_query.from_user.id, "тестовая+покупка")
-    link100 = create_pay_link(499, callback_query.from_user.id, "покупка+100+токенов")
-    link500 = create_pay_link(1390, callback_query.from_user.id, "покупка+500+токенов")
-    link1000 = create_pay_link(
-        2490, callback_query.from_user.id, "покупка+1000+токенов"
-    )
+
+    await new_payment(callback_query.from_user.id)
+    get_invId = get_last_payment_id(callback_query.from_user.id)
+
+    if get_invId is None:
+        await callback_query.message.edit_text(
+            text="Упс... Произошла непредвиденная ошибка.\n\n"
+            + "Простите за предоставленные неудобства, пожалуйста, повторите попытку позднее 😔",
+            reply_markup=after_payment_keyboard,
+        )
+        return
+
+    link1 = create_pay_link(1, get_invId, "тестовая+покупка")
+    link100 = create_pay_link(499, get_invId, "покупка+100+токенов")
+    link500 = create_pay_link(1390, get_invId, "покупка+500+токенов")
+    link1000 = create_pay_link(2490, get_invId, "покупка+1000+токенов")
 
     await callback_query.message.edit_text(
         text="Выбери сумму пополнения",
