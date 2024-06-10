@@ -28,4 +28,9 @@ CREATE TABLE IF NOT EXISTS feedbacks (
 	show_date TEXT DEFAULT "0",
 	fk_api_key INTEGER REFERENCES shops(api_key)
 );
+
+CREATE TABLE IF NOT EXISTS payments (
+	id INTEGER PRIMARY KEY,
+	fb_tg_id INTEGER REFERENCES users(tg_id)
+);
 """
