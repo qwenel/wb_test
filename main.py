@@ -31,7 +31,7 @@ logger.add(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-
+    logger.info("STARTING...")
     await set_webhook()
     logger.info("STARTING...")
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")

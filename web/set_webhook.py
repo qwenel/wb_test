@@ -21,7 +21,15 @@ dp.include_router(router_main)
 
 
 async def set_webhook():
-    await bot.delete_webhook(True)
+    logger.info("setting webhook")
+    info = await bot.get_webhook_info()
+
+    logger.info(
+        f"WebHook info: {info.url}, size: {len(info.url)}, {info.model_dump_json()}"
+    )
+
+    if len(info.url) != 0:
+        await bot.delete_webhook(True)
 
     webhook_uri = os.getenv("WEB_HOOK_ADDRS") + TG_BOT_TOKEN
 
