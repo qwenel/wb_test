@@ -174,7 +174,7 @@ async def balance_replenish_web_app_keyboard(
         text="1000 Ответов - 2490,00₽ - (1 токен = 2,49₽)",
         web_app=WebAppInfo(url=link1000),
     )
-    builder.button(text="Назад ↩️", callback_data=cb.archive_fb)
+    builder.button(text="Назад ↩️", callback_data=cb.balance)
     builder.button(text="Главное меню 🏠", callback_data=cb.main_menu)
 
     builder.adjust(1, True)

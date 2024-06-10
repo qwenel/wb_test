@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 
 from api.robocassa.robocassa import parse_response, check_signature_result, shop_pwd_2
+from app.database.payments_method import get_user_id_by_payment_id
 from app.handlers.balance_handler import payment_status_failure, payment_status_success
 from web.set_webhook import bot
 from app.states.userStates import UserStates
@@ -24,13 +25,16 @@ async def result_payment(request: Request) -> str:
     number = param_request["InvId"]
     signature = param_request["SignatureValue"]
 
-    if check_signature_result(number, cost, signature, merchant_password_2):
-        logger.info("success payment")
-        await payment_status_success(
-            bot, number, cost, UserStates.balance_replenishment
-        )
-        return f'OK{param_request["InvId"]}'
+    user_id = await get_user_id_by_payment_id(number)
+
+    if (
+        check_signature_result(number, cost, signature, merchant_password_2)
+        and user_id is not None
+    ):
+        logger.info(f"success payment, user_id: {user_id[0]}")
+        await payment_status_success(bot, user_id[0], int(float(cost)))
+        return f"OK{number}"
 
     logger.info("failure payment")
-    await payment_status_failure(bot, number, cost, UserStates.balance_replenishment)
+    await payment_status_failure(bot, user_id[0], int(float(cost)))
     return "bad sign"

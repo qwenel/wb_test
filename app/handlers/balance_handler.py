@@ -16,6 +16,7 @@ from ..states.userStates import UserStates
 
 
 tokens = {
+    1: 0,
     499: 100,
     1390: 500,
     2490: 1000,
@@ -31,7 +32,9 @@ async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext
     await state.set_state(UserStates.balance_replenishment)
 
     await new_payment(callback_query.from_user.id)
-    get_invId = get_last_payment_id(callback_query.from_user.id)
+    get_invId = await get_last_payment_id(callback_query.from_user.id)
+
+    logger.info(f"invID: {get_invId}, user_id: {callback_query.from_user.id}")
 
     if get_invId is None:
         await callback_query.message.edit_text(
@@ -56,10 +59,10 @@ async def balance_replenishment(callback_query: CallbackQuery, state: FSMContext
     await callback_query.answer()
 
 
-async def payment_status_success(
-    bot: Bot, user_id: int, out_sum: int, state: FSMContext
-):
-    await state.set_state(UserStates.menu)
+async def payment_status_success(bot: Bot, user_id: int, out_sum: int):
+
+    if out_sum > 2:
+        await inc_balance(user_id, tokens[out_sum])
 
     await bot.send_message(
         user_id,
@@ -70,37 +73,12 @@ async def payment_status_success(
     )
 
 
-async def payment_status_success(
-    bot: Bot, user_id: int, out_sum: int, state: FSMContext
-):
-    await state.set_state(UserStates.menu)
-
-    tokens = {
-        499: 100,
-        1390: 500,
-        2490: 1000,
-    }
-
-    await inc_balance(user_id, tokens[out_sum])
-
-    await bot.send_message(
-        user_id,
-        text=f"Отлично! Покупка на сумму <b>{out_sum} RUB</b> прошла успешно!"
-        + f"\n\nВаш баланс пополнен на <b>{tokens[out_sum]} токенов</b>!",
-        parse_mode="HTML",
-        reply_markup=after_payment_keyboard,
-    )
-
-
-async def payment_status_failure(
-    bot: Bot, user_id: int, out_sum: int, state: FSMContext
-):
-    await state.set_state(UserStates.menu)
+async def payment_status_failure(bot: Bot, user_id: int, out_sum: int):
 
     await bot.send_message(
         user_id,
         text=f"Произошла ошибка! Покупка на сумму <b>{out_sum} RUB</b> не осуществлена!"
-        + f"\n\nПопробуйте ещё раз...",
+        + "\n\nПопробуйте ещё раз...",
         parse_mode="HTML",
         reply_markup=after_payment_keyboard,
     )
