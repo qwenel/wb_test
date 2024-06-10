@@ -31,6 +31,6 @@ CREATE TABLE IF NOT EXISTS feedbacks (
 
 CREATE TABLE IF NOT EXISTS payments (
 	id INTEGER PRIMARY KEY,
-	fb_tg_id INTEGER REFERENCES users(tg_id)
+	fk_tg_id INTEGER REFERENCES users(tg_id)
 );
 """

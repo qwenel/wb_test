@@ -6,6 +6,7 @@ from app.database import user_methods as db_user
 from app.database import shop_methods as db_shop
 from app.database import shop_settings as db_settings
 from app.database import answer_methods as db_ans
+from app.database import payments_method as db_pay
 
 
 # database methods testing
@@ -194,6 +195,32 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             ls = await db_user.get_users(db)
 
-            print(ls)
-
             self.assertEqual(len(ls), 3)
+
+    async def test_getting_payments(self):
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+
+            db = tmpdirname + "/db_test.db"
+
+            await db_pay.new_payment(111, db)
+            await db_pay.new_payment(111, db)
+            await db_pay.new_payment(111, db)
+            await db_pay.new_payment(111, db)
+
+            await db_pay.new_payment(222, db)
+            await db_pay.new_payment(222, db)
+            await db_pay.new_payment(222, db)
+            await db_pay.new_payment(222, db)
+
+            await db_pay.new_payment(111, db)
+
+            ls1 = await db_pay.get_payment_id(111, db)
+            ls2 = await db_pay.get_payment_id(222, db)
+
+            last1 = ls1[-1][0]
+            last2 = ls2[-1][0]
+
+            self.assertEqual(len(ls1) + len(ls2), 9)
+            self.assertEqual(last1, 9)
+            self.assertEqual(last2, 8)
