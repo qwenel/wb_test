@@ -2,11 +2,11 @@ import unittest
 import tempfile
 from aiosqlite import connect
 
-from app.database import user_methods as db_user
-from app.database import shop_methods as db_shop
-from app.database import shop_settings as db_settings
-from app.database import answer_methods as db_ans
-from app.database import payments_method as db_pay
+from app.database.exec_methods import user_methods as db_user
+from app.database.exec_methods import shop_methods as db_shop
+from app.database.exec_methods import shop_settings as db_settings
+from app.database.exec_methods import answer_methods as db_ans
+from app.database.exec_methods import payments_method as db_pay
 
 
 # database methods testing

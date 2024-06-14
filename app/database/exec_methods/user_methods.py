@@ -1,5 +1,5 @@
 from app.database.vars import path
-from ..database.connection import create_connection
+from ...database.connection import create_connection
 
 
 async def add_user(telegram_id: int, db=path) -> bool:

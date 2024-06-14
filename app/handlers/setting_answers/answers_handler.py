@@ -2,7 +2,7 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from app.database.shop_settings import set_rating
+from app.database.exec_methods.shop_settings import set_rating
 from app.keyboards.callbacks import callbacks as cb
 from app.keyboards import inlineKeyboards as in_kb
 from app.states.userStates import UserStates

@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 
-from ..database.user_methods import add_user, get_balance
+from ..database.exec_methods.user_methods import add_user, get_balance
 
 from ..keyboards.inlineKeyboards import (
     starting_keyboard,

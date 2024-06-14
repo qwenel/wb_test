@@ -2,10 +2,10 @@ import asyncio
 from loguru import logger
 
 from api.gpt.gpt_api import generate_answer
-from app.database.shop_settings import get_rating
-from app.database.user_methods import get_users, get_users_with_balance
-from app.database.shop_methods import get_apis_list
-from app.database.answer_methods import (
+from app.database.exec_methods.shop_settings import get_rating
+from app.database.exec_methods.user_methods import get_users, get_users_with_balance
+from app.database.exec_methods.shop_methods import get_apis_list
+from app.database.exec_methods.answer_methods import (
     delete_old_shown_feedback,
     fill_unanswered_feedback,
     get_unanswered_fb_list,

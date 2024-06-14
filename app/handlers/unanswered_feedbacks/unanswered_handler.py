@@ -9,7 +9,7 @@ from aiogram.fsm.context import FSMContext
 
 from api.gpt.gpt_api import generate_answer
 from api.wb.wb_feedbacks_ans import answer_feedback
-from app.database.user_methods import (
+from app.database.exec_methods.user_methods import (
     publish_cancelling,
     undo_user_props_after_generating,
 )

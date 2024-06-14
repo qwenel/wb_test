@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 import app.keyboards.callbacks.callbacks as cb
-import app.database.shop_methods as db_shop
+import app.database.exec_methods.shop_methods as db_shop
 
 
 decide_auto_ans_keyboard = InlineKeyboardMarkup(

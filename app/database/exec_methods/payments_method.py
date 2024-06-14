@@ -1,5 +1,5 @@
 from app.database.vars import path
-from ..database.connection import create_connection
+from ...database.connection import create_connection
 
 
 async def new_payment(tg_id: int, db=path):

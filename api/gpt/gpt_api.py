@@ -3,8 +3,8 @@ from loguru import logger
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from api.wb.wb_feedbacks_ans import answer_feedback
-from app.database.answer_methods import update_answer_text
-from app.database.user_methods import update_user_props_after_generating
+from app.database.exec_methods.answer_methods import update_answer_text
+from app.database.exec_methods.user_methods import update_user_props_after_generating
 from app.database.vars import path
 
 

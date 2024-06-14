@@ -6,7 +6,13 @@ CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY,
   	tg_id INTEGER UNIQUE NOT NULL,
     balance INTEGER DEFAULT 9999999,
-    count_ans INTEGER DEFAULT 0
+    count_ans INTEGER DEFAULT 0,
+    payments_sum INTEGER DEFAULT 0,
+    username TEXT,
+    register_date TEXT,
+    last_payment_date TEXT,
+    last_answer_date TEXT,
+    phone_number INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS shops (

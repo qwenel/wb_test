@@ -1,5 +1,5 @@
 from app.database.vars import path
-from ..database.connection import create_connection
+from ...database.connection import create_connection
 
 
 async def add_shop(telegram_id : int, shop_name : str, db=path) -> bool:

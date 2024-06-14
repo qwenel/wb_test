@@ -3,14 +3,14 @@ from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
 
 from api.wb.validChecks import is_valid_api_key
-from app.database.shop_settings import set_api_key
+from app.database.exec_methods.shop_settings import set_api_key
 
 from ..states.userStates import UserStates
 
 import app.keyboards.inlineKeyboards as in_kb
 import app.keyboards.callbacks.callbacks as cb
 
-from ..database.shop_methods import add_shop, delete_shop_if_null, delete_shop
+from ..database.exec_methods.shop_methods import add_shop, delete_shop_if_null, delete_shop
 
 from .setting_rating.rating_handler import router_rating
 from .setting_answers.answers_handler import router_answers

@@ -1,6 +1,6 @@
 from app.database.vars import path
-from app.database.shop_methods import get_shop_id
-from ..database.connection import create_connection
+from app.database.exec_methods.shop_methods import get_shop_id
+from ...database.connection import create_connection
 
 
 async def get_feedback_id(fb_id: str, db=path) -> int | bool:

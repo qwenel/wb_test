@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import aiohttp
 from loguru import logger
 
-from app.database.answer_methods import delete_feedback
+from app.database.exec_methods.answer_methods import delete_feedback
 
 
 async def get_feedbacks(api_key: str) -> dict | None:

@@ -4,8 +4,8 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardBut
 from aiogram.fsm.context import FSMContext
 
 from api.robocassa.robocassa import create_pay_link
-from app.database.payments_method import get_last_payment_id, new_payment
-from app.database.user_methods import inc_balance
+from app.database.exec_methods.payments_method import get_last_payment_id, new_payment
+from app.database.exec_methods.user_methods import inc_balance
 import app.keyboards.callbacks.callbacks as cb
 from ..keyboards.inlineKeyboards import (
     balance_replenish_by_card_keyboard,
@@ -94,7 +94,7 @@ async def payment_status_success(bot: Bot, user_id: int, out_sum: int):
 
     if out_sum > 2:
         await inc_balance(user_id, tokens[out_sum])
-
+    
     await bot.send_message(
         user_id,
         text=f"Отлично! Покупка на сумму <b>{out_sum} RUB</b> прошла успешно!"
