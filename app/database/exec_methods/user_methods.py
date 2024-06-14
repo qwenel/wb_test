@@ -175,7 +175,8 @@ async def inc_balance(telegram_id: int, amount: int, db=path) -> bool:
     cursor = await conn.cursor()
 
     await cursor.execute(
-        "UPDATE users SET balance=balance+? WHERE tg_id=?", (amount, telegram_id)
+        "UPDATE users SET balance=balance+? last_payment_date=datetime('now', '+3 hours') payments_sum=payments_sum+? WHERE tg_id=?",
+        (amount, amount, telegram_id),
     )
 
     await cursor.close()
