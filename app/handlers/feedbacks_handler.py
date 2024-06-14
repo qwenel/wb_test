@@ -8,7 +8,7 @@ from app.database.exec_methods.answer_methods import (
     get_not_null_answer_feedbacks_list,
     mark_shown_feedback,
 )
-from app.database.user_methods import get_answers_counter
+from app.database.exec_methods.user_methods import get_answers_counter
 import app.keyboards.callbacks.callbacks as cb
 from ..states.userStates import UserStates
 
@@ -19,6 +19,7 @@ from ..keyboards.inlineKeyboards import (
 )
 
 from .unanswered_feedbacks.unanswered_handler import router_unanswered
+from main import logger
 
 
 router_answers = Router()
@@ -50,7 +51,7 @@ async def show_archive(callback_query: CallbackQuery, state: FSMContext):
     got_counter = await get_answers_counter(callback_query.from_user.id)
 
     if got_counter is None:
-        print("Ошибка! Не удалось получить count_ans у пользователя.")
+        logger.error(f"Ошибка! Не удалось получить count_ans у пользователя.")
         await state.clear()
         await state.set_state(UserStates.menu)
         return

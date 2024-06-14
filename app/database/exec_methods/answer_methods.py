@@ -196,11 +196,12 @@ async def update_answer_text(fb_id: str, ans_text: str, db=path):
         await cursor.execute(
             "UPDATE feedbacks SET fb_answer=NULL WHERE fb_id=?", (fb_id,)
         )
-        print("поставил нул")
+
     else:
         await cursor.execute(
             "UPDATE feedbacks SET fb_answer=? WHERE fb_id=?", (ans_text, fb_id)
         )
+        await cursor.execute("UPDATE users SET last_answer_date=datetime('now')")
 
     await cursor.close()
     await conn.commit()

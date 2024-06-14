@@ -2,15 +2,24 @@ from aiosqlite import connect, Connection
 from app.database.vars import path, creation
 
 
-'''
-register_date = datetime() new field in Users
-username = get.username new field Users
-phone_number = non
-shop_amount = COUNT shops WHERE ...
-api_keys = SELECT api_key WHERE ...
-answers_count = SELECT answers_count
-last_answer_date = datetime() new field feedbacks
-balance = SELECT balance WHERE
+"""
+### register_date = in Users
+
+### username = in Users
+
+### phone_number = in Users
+
+### shop_amount = len(get_apis_list())
+
+### api_keys = get_apis_list()
+
+### answers_count = in Users
+
+### last_answer_date = in Users
+
+### balance = in Users
+
 last_payment_date = datetime() new field payments 
+
 payments_sum = new field Users
-'''
+"""

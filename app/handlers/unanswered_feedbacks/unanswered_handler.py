@@ -20,8 +20,8 @@ from app.keyboards.inlineKeyboards import (
 )
 import app.keyboards.callbacks.callbacks as cb
 from ...states.userStates import UserStates
-
-from app.database.answer_methods import (
+from main import logger
+from app.database.exec_methods.answer_methods import (
     get_answer_by_feedback_id,
     get_api_key_by_feedback_id,
     get_feedback_to_generate_answer,
@@ -170,7 +170,7 @@ async def generate(callback_query: CallbackQuery, state: FSMContext):
     got_feedback = await get_feedback_to_generate_answer(callback_query.data[4:])
 
     if got_feedback == False:
-        print("Почему-то не нашел отзыв...")
+        logger.error("Не нашел отзыв перед генерацией")
         return
 
     answer = await generate_answer(
@@ -182,7 +182,7 @@ async def generate(callback_query: CallbackQuery, state: FSMContext):
     )
 
     if answer == False:
-        print("Непредвиденная ошибка при генерации ответа...")
+        logger.error("Непредвиденная ошибка при генерации ответа на отзыв...")
         return
 
     await update_answer_text(callback_query.data[4:], answer)

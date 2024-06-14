@@ -114,16 +114,3 @@ async def support_msg(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_text(
         text="Выберите пункт меню", reply_markup=support_menu
     )
-
-
-# @router_main.message(Command("getAllUsers"))
-# async def getUsersList(message: Message):
-
-#     list_of_users = await get_users()
-#     print(list_of_users)
-
-#     if len(list_of_users) == 0:
-#         await message.answer(text="Список пользователей пуст, что очень странно...")
-
-#     await message.answer(text="Список пользователей:\n\n"+
-#                          "\n".join(list_of_users))
