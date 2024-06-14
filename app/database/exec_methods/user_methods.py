@@ -2,14 +2,17 @@ from app.database.vars import path
 from ...database.connection import create_connection
 
 
-async def add_user(telegram_id: int, db=path) -> bool:
+async def add_user(telegram_id: int, username: str, db=path) -> bool:
     if await get_user(telegram_id, db) != -1:
         return False
 
     conn = await create_connection(db)
     cursor = await conn.cursor()
 
-    await cursor.execute("INSERT INTO users (tg_id) VALUES (?)", (telegram_id,))
+    await cursor.execute(
+        "INSERT INTO users (tg_id, username, register_date) VALUES (?, ?, datetime('now', '+3 hours'))",
+        (telegram_id, username),
+    )
 
     await cursor.close()
     await conn.commit()

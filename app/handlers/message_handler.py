@@ -32,7 +32,7 @@ async def start_msg(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(UserStates.started)
 
-    if not await add_user(message.chat.id):
+    if not await add_user(message.chat.id, message.chat.username):
         pass
 
     await message.answer(

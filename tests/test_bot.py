@@ -17,8 +17,8 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             db = tmpdirname + "/db_test.db"
 
-            await db_user.add_user(111, db)
-            await db_user.add_user(222, db)
+            await db_user.add_user(111, "111", db)
+            await db_user.add_user(222, "222", db)
 
             await db_shop.add_shop(111, "test_name1", db)
             await db_shop.add_shop(111, "test_name2", db)
@@ -42,8 +42,8 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             db = tmpdirname + "/db_test.db"
 
-            await db_user.add_user(111, db)
-            await db_user.add_user(222, db)
+            await db_user.add_user(111, "111", db)
+            await db_user.add_user(222, "222", db)
 
             await db_shop.add_shop(111, "test_name1", db)
             await db_shop.add_shop(111, "test_name2", db)
@@ -68,7 +68,7 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             db = tmpdirname + "/db_test.db"
 
-            await db_user.add_user(111, db)
+            await db_user.add_user(111, "111", db)
 
             await db_shop.add_shop(111, "test_name1", db)
             await db_shop.add_shop(111, "test_name2", db)
@@ -92,8 +92,8 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             db = tmpdirname + "/db_test.db"
 
-            await db_user.add_user(111, db)
-            await db_user.add_user(222, db)
+            await db_user.add_user(111, "111", db)
+            await db_user.add_user(222, "222", db)
 
             await db_shop.add_shop(111, "shop1", db)
             await db_shop.add_shop(111, "shop2", db)
@@ -135,7 +135,7 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             db = tmpdirname + "/db_test.db"
 
-            await db_user.add_user(111, db)
+            await db_user.add_user(111, "111", db)
 
             await db_shop.add_shop(111, "ViPi", db)
 
@@ -157,7 +157,7 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             db = tmpdirname + "/db_test.db"
 
-            await db_user.add_user(111, db)
+            await db_user.add_user(111, "111", db)
             await db_shop.add_shop(111, "ViPi", db)
             await db_settings.set_api_key(111, "ViPi", "api_key1", db)
 
@@ -189,9 +189,9 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
 
             db = tmpdirname + "/db_test.db"
 
-            await db_user.add_user(12312, db)
-            await db_user.add_user(122, db)
-            await db_user.add_user(1212, db)
+            await db_user.add_user(12312, "12312", db)
+            await db_user.add_user(122, "122", db)
+            await db_user.add_user(1212, "1212", db)
 
             ls = await db_user.get_users(db)
 
