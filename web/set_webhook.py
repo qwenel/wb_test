@@ -3,9 +3,8 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, Request
 from aiogram.types import Update
 from aiogram import Bot, Dispatcher
-
+from loguru import logger
 from app.handlers.message_handler import router_main
-from main import logger
 
 
 load_dotenv(override=True)

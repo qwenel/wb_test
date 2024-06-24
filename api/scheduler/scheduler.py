@@ -118,10 +118,10 @@ async def auto_answer(
 ):
 
     if rating_filter == "gt0":
-        await generate_answer(tg_id, fb_id, fb_text, api_key, True)
+        await generate_answer(tg_id, fb_id, fb_text, api_key, fb_rating, True)
     elif rating_filter == "gt2" and fb_rating >= 2:
-        await generate_answer(tg_id, fb_id, fb_text, api_key, True)
+        await generate_answer(tg_id, fb_id, fb_text, api_key, fb_rating, True)
     elif rating_filter == "gt3" and fb_rating >= 3:
-        await generate_answer(tg_id, fb_id, fb_text, api_key, True)
+        await generate_answer(tg_id, fb_id, fb_text, api_key, fb_rating, True)
     elif rating_filter == "gt4" and fb_rating >= 4:
-        await generate_answer(tg_id, fb_id, fb_text, api_key, True)
+        await generate_answer(tg_id, fb_id, fb_text, api_key, fb_rating, True)

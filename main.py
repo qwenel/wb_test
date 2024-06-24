@@ -13,6 +13,7 @@ from api.scheduler.scheduler import (
     clear_old_shown_feedbacks_job,
 )
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from app.database.export.export import get_data_from_db_to_export
 from web.set_webhook import router_whook, set_webhook
 from web.kassa_reqs import router_kassa
 
@@ -20,20 +21,25 @@ load_dotenv(override=True)
 
 
 LOGGER_PATH = os.getenv("LOGGER_PATH")
-logger.add(
-    LOGGER_PATH,
-    format="{time} {level} {message}",
-    rotation="100 KB",
-    compression="zip",
-    colorize=True,
-)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+
+    logger.add(
+        LOGGER_PATH,
+        format="{time} {level} {message}",
+        rotation="100 KB",
+        compression="zip",
+        colorize=True,
+    )
+    logger.info("LOGGER IS SET")
+
+    await get_data_from_db_to_export()
+
     logger.info("STARTING...")
     await set_webhook()
-    logger.info("STARTING...")
+    logger.info("WEBHOOK IS SET...")
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
     scheduler.add_job(db_fill_job, trigger="interval", seconds=10)

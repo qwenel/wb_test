@@ -19,7 +19,7 @@ from ..keyboards.inlineKeyboards import (
 )
 
 from .unanswered_feedbacks.unanswered_handler import router_unanswered
-from main import logger
+from loguru import logger
 
 
 router_answers = Router()

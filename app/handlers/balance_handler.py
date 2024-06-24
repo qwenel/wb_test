@@ -12,7 +12,7 @@ from ..keyboards.inlineKeyboards import (
     balance_replenish_web_app_keyboard,
     after_payment_keyboard,
 )
-from main import logger
+from loguru import logger
 from ..states.userStates import UserStates
 
 

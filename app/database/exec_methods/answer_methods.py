@@ -74,7 +74,7 @@ async def get_feedback_to_generate_answer(fb_id: str, db=path) -> bool | list:
     cursor = await conn.cursor()
 
     await cursor.execute(
-        "SELECT fb_text, fk_api_key FROM feedbacks WHERE fb_id=?", (fb_id,)
+        "SELECT fb_text, fk_api_key, fb_rating FROM feedbacks WHERE fb_id=?", (fb_id,)
     )
 
     got_feedback = await cursor.fetchone()

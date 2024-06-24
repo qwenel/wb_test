@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     payments_sum INTEGER DEFAULT 0,
     username TEXT NOT NULL,
     register_date TEXT,
-    last_payment_date TEXT,
-    last_answer_date TEXT,
+    last_payment_date TEXT DEFAULT "0",
+    last_answer_date TEXT DEFAULT "0",
     phone_number INTEGER DEFAULT 0
 );
 
@@ -39,4 +39,49 @@ CREATE TABLE IF NOT EXISTS payments (
 	id INTEGER PRIMARY KEY,
 	fk_tg_id INTEGER REFERENCES users(tg_id)
 );
+"""
+
+
+"""
+### register_date = in Users
+
+### username = in Users
+
+### phone_number = in Users
+
+### shop_amount = len(get_apis_list())
+
+### api_keys = get_apis_list()
+
+### answers_count = in Users
+
+### last_answer_date = in Users
+
+### balance = in Users
+
+### last_payment_date = in Users 
+
+### payments_sum = in Users
+"""
+
+"""
+id INTEGER PRIMARY KEY,
+
+tg_id INTEGER UNIQUE NOT NULL,
+
+balance INTEGER DEFAULT 9999999,
+
+count_ans INTEGER DEFAULT 0,
+
+payments_sum INTEGER DEFAULT 0,
+
+username TEXT NOT NULL,
+
+register_date TEXT,
+
+last_payment_date TEXT,
+
+last_answer_date TEXT,
+
+phone_number INTEGER DEFAULT 0
 """

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Request
 
 from api.robocassa.robocassa import parse_response, check_signature_result, shop_pwd_2
-from app.database.payments_method import get_user_id_by_payment_id
+from app.database.exec_methods.payments_method import get_user_id_by_payment_id
 from app.handlers.balance_handler import payment_status_failure, payment_status_success
 from web.set_webhook import bot
 from app.states.userStates import UserStates
-from main import logger
+from loguru import logger
 
 
 router_kassa = APIRouter()

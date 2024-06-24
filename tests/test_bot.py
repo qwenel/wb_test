@@ -2,11 +2,13 @@ import unittest
 import tempfile
 from aiosqlite import connect
 
+from api.gspread.gspread import perform_gspread_update
 from app.database.exec_methods import user_methods as db_user
 from app.database.exec_methods import shop_methods as db_shop
 from app.database.exec_methods import shop_settings as db_settings
 from app.database.exec_methods import answer_methods as db_ans
 from app.database.exec_methods import payments_method as db_pay
+from app.database.export.export import get_data_from_db_to_export
 
 
 # database methods testing
@@ -224,3 +226,66 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(ls1) + len(ls2), 9)
             self.assertEqual(last1, 9)
             self.assertEqual(last2, 8)
+
+    async def test_getting_payments(self):
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+
+            db = tmpdirname + "/db_test.db"
+
+            await db_user.add_user(1, "user1", db)
+            await db_user.add_user(2, "user2", db)
+            await db_user.add_user(3, "user3", db)
+            await db_user.add_user(4, "user4", db)
+
+            await db_shop.add_shop(1, "user1_shop1", db)
+            await db_shop.add_shop(1, "user1_shop2", db)
+            await db_shop.add_shop(1, "user1_shop3", db)
+            await db_settings.set_api_key(1, "user1_shop1", "api1", db)
+            await db_settings.set_api_key(1, "user1_shop2", "api2", db)
+            await db_settings.set_api_key(1, "user1_shop3", "api3", db)
+
+            await db_shop.add_shop(2, "user2_shop1", db)
+            await db_shop.add_shop(2, "user2_shop2", db)
+            await db_settings.set_api_key(2, "user2_shop1", "api4", db)
+            await db_settings.set_api_key(2, "user2_shop2", "api5", db)
+
+            await db_shop.add_shop(4, "user4_shop1", db)
+            await db_settings.set_api_key(4, "user4_shop1", "api6", db)
+
+            got_info = await get_data_from_db_to_export(db)
+
+            print(got_info)
+
+            self.assertEqual(True, True)
+            
+    async def test_getting_payments(self):
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+
+            db = tmpdirname + "/db_test.db"
+
+            await db_user.add_user(1, "user1", db)
+            await db_user.add_user(2, "user2", db)
+            await db_user.add_user(3, "user3", db)
+            await db_user.add_user(4, "user4", db)
+
+            await db_shop.add_shop(1, "user1_shop1", db)
+            await db_shop.add_shop(1, "user1_shop2", db)
+            await db_shop.add_shop(1, "user1_shop3", db)
+            await db_settings.set_api_key(1, "user1_shop1", "api1", db)
+            await db_settings.set_api_key(1, "user1_shop2", "api2", db)
+            await db_settings.set_api_key(1, "user1_shop3", "api3", db)
+
+            await db_shop.add_shop(2, "user2_shop1", db)
+            await db_shop.add_shop(2, "user2_shop2", db)
+            await db_settings.set_api_key(2, "user2_shop1", "api4", db)
+            await db_settings.set_api_key(2, "user2_shop2", "api5", db)
+
+            await db_shop.add_shop(4, "user4_shop1", db)
+            await db_settings.set_api_key(4, "user4_shop1", "api6", db)
+
+            got_data = await get_data_from_db_to_export(db)
+            await perform_gspread_update(got_data)
+
+            self.assertEqual(True, True)

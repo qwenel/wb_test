@@ -20,7 +20,7 @@ from app.keyboards.inlineKeyboards import (
 )
 import app.keyboards.callbacks.callbacks as cb
 from ...states.userStates import UserStates
-from main import logger
+from loguru import logger
 from app.database.exec_methods.answer_methods import (
     get_answer_by_feedback_id,
     get_api_key_by_feedback_id,
@@ -178,6 +178,7 @@ async def generate(callback_query: CallbackQuery, state: FSMContext):
         callback_query.data[4:],
         got_feedback[0],
         got_feedback[1],
+        got_feedback[2],
         False,
     )
 
