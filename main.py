@@ -37,11 +37,12 @@ async def lifespan(app: FastAPI):
     )
     logger.info("LOGGER IS SET")
 
-    await get_data_from_db_to_export()
-
     logger.info("STARTING...")
+
     await set_webhook()
+
     logger.info("WEBHOOK IS SET...")
+
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
     scheduler.add_job(db_fill_job, trigger="interval", seconds=10)
