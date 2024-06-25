@@ -16,6 +16,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.database.export.export import get_data_from_db_to_export
 from web.set_webhook import router_whook, set_webhook
 from web.kassa_reqs import router_kassa
+from web.export_sheets import router_export
+
 
 load_dotenv(override=True)
 
@@ -61,6 +63,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(router_whook)
 app.include_router(router_kassa)
+app.include_router(router_export)
 
 
 if __name__ == "__main__":

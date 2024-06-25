@@ -1,3 +1,4 @@
+from api.gspread.gspread import perform_gspread_update
 from app.database.connection import create_connection
 from app.database.exec_methods.shop_methods import get_apis_list
 from app.database.vars import path
@@ -24,14 +25,10 @@ async def get_data_from_db_to_export(db=path):
             user_info = format_info(user_info, apis_list)
             users_info.append(user_info)
 
-        await conn.commit()
-        await conn.close()
-
-        return users_info
+        await perform_gspread_update(users_info)
 
     await conn.commit()
     await conn.close()
-    return
 
 
 def format_info(users, additional_data):
