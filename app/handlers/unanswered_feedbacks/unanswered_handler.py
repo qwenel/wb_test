@@ -186,7 +186,7 @@ async def generate(callback_query: CallbackQuery, state: FSMContext):
         logger.error("Непредвиденная ошибка при генерации ответа на отзыв...")
         return
 
-    await update_answer_text(callback_query.data[4:], answer)
+    await update_answer_text(callback_query.from_user.id, callback_query.data[4:], answer)
 
     await callback_query.message.edit_text(
         text=callback_query.message.text + f"\n\nОтвет:\n<code>{answer}</code>",
@@ -202,7 +202,7 @@ async def edit_generated(callback_query: CallbackQuery, state: FSMContext):
 
     await state.update_data(fb_id=callback_query.data[4:])
 
-    await update_answer_text(callback_query.data[4:], "null")
+    await update_answer_text(callback_query.from_user.id, callback_query.data[4:], "null")
 
     await callback_query.answer()
 
@@ -223,7 +223,7 @@ async def check_edited(message: Message, state: FSMContext):
 
     feedback = await get_feedback(data["fb_id"])
 
-    await update_answer_text(data["fb_id"], message.text)
+    await update_answer_text(message.from_user.id, data["fb_id"], message.text)
 
     await message.answer(
         text="ОТЗЫВ\n\n"
@@ -253,7 +253,7 @@ async def publishing(callback_query: CallbackQuery, state: FSMContext):
 
     if not await answer_feedback(feedback_id, answer, api_key):
         await undo_user_props_after_generating(callback_query.from_user.id)
-        await update_answer_text(feedback_id, "null")
+        await update_answer_text(callback_query.from_user.id, feedback_id, "null")
         await callback_query.message.answer(
             text="Ошибка при публикации. . .\n\n" + "Отзыв не опубликован!",
             reply_markup=go_to_main_menu_keyboard,
@@ -273,4 +273,4 @@ async def no_publish(callback_query: CallbackQuery):
 
     await publish_cancelling(callback_query.from_user.id)
 
-    await update_answer_text(feedback_id, "null")
+    await update_answer_text(callback_query.from_user.id, feedback_id, "null")

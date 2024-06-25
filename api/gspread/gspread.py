@@ -29,4 +29,7 @@ async def perform_gspread_update(data):
         ],
         "A1",
     )
+
+    wks.format("A1:J1", {"textFormat": {"bold": True}})
+
     wks.update(data, "A2")

@@ -188,7 +188,7 @@ async def get_not_null_answer_feedbacks_list(telegram_id: int, db=path) -> list 
     return list_of_feedbacks
 
 
-async def update_answer_text(fb_id: str, ans_text: str, db=path):
+async def update_answer_text(tg_id: int, fb_id: str, ans_text: str, db=path):
     conn = await create_connection(db)
     cursor = await conn.cursor()
 
@@ -199,10 +199,8 @@ async def update_answer_text(fb_id: str, ans_text: str, db=path):
 
     else:
         await cursor.execute(
-            "UPDATE feedbacks SET fb_answer=? WHERE fb_id=?", (ans_text, fb_id)
-        )
-        await cursor.execute(
-            "UPDATE users SET last_answer_date=datetime('now', '+3 hours')"
+            "UPDATE feedbacks SET fb_answer=? WHERE fb_id=?; UPDATE users SET last_answer_date=datetime('now', '+3 hours') WHERE",
+            (ans_text, fb_id),
         )
 
     await cursor.close()

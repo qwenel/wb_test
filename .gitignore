@@ -23,3 +23,5 @@ logs/
 robokassa.py
 
 cred.json
+
+tmp.py

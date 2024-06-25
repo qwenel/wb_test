@@ -39,12 +39,16 @@ async def set_webhook():
 @router_whook.post(f"/tg_updates/{TG_BOT_TOKEN}")
 async def process_webhook(request: Request):
     logger.info(f"tg request: {await request.json()}")
-    if TG_BOT_TOKEN == TG_BOT_TOKEN:
-        update = Update(**await request.json())
-        await dp.feed_update(bot, update)
-        return {"result": "ok"}
-    else:
-        return {"error": "true", "status": "403"}
+    try:
+        if TG_BOT_TOKEN == TG_BOT_TOKEN:
+            update = Update(**await request.json())
+            await dp.feed_update(bot, update)
+            return {"result": "ok"}
+        else:
+            return {"error": "true", "status": "403"}
+    except Exception as ex:
+        logger.error(ex)
+    return {"error": "true", "status": "500"}
 
 
 @router_whook.get("/")

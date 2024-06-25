@@ -147,7 +147,7 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
                 "fb_id1", 5, "ViPi", "dildos", "like it", "api_key1", db
             )
 
-            await db_ans.update_answer_text("fb_id1", "ANSWER TEXT TeST", db)
+            await db_ans.update_answer_text(111, "fb_id1", "ANSWER TEXT TeST", db)
 
             got_answer = await db_ans.get_answer(111, "ViPi", db)
 
@@ -173,7 +173,7 @@ class DBTester(unittest.IsolatedAsyncioTestCase):
                 "fb_id3", 5, "ViPi", "dildos", "like it3", "api_key1", db
             )
 
-            await db_ans.update_answer_text("fb_id1", "ANSWER TEXT TeST", db)
+            await db_ans.update_answer_text(111, "fb_id1", "ANSWER TEXT TeST", db)
 
             got_null_answer_feedbacks_list = await db_ans.get_unanswered_fb_list(
                 111, db
