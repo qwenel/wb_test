@@ -23,18 +23,17 @@ load_dotenv(override=True)
 
 
 LOGGER_PATH = os.getenv("LOGGER_PATH")
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-
-    logger.add(
+logger.add(
         LOGGER_PATH,
         format="{time} {level} {message}",
         rotation="100 KB",
         compression="zip",
         colorize=True,
     )
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
     logger.info("LOGGER IS SET")
 
     logger.info("STARTING...")
