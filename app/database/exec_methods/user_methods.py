@@ -4,6 +4,7 @@ from ...database.connection import create_connection
 
 async def add_user(telegram_id: int, username: str, db=path) -> bool:
     if await get_user(telegram_id, db) != -1:
+        await update_user(telegram_id, username, db)
         return False
 
     conn = await create_connection(db)
@@ -19,6 +20,21 @@ async def add_user(telegram_id: int, username: str, db=path) -> bool:
     await conn.close()
 
     return True
+
+
+async def update_user(telegram_id: int, username: str, db=path):
+    conn = await create_connection(db)
+    cursor = await conn.cursor()
+
+    await cursor.execute(
+        "UPDATE users SET username=? WHERE tg_id=?",
+        (username, telegram_id),
+    )
+
+    await cursor.close()
+    await conn.commit()
+    await conn.close()
+    return
 
 
 async def get_users(db=path) -> list | None:
